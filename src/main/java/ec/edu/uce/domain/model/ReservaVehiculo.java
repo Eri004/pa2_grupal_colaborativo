@@ -3,18 +3,22 @@ package ec.edu.uce.domain.model;
 import java.time.LocalDate;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "reserva_vehiculo")
-@NamedQuery(name = "ReservaVehiculo.buscarPorCedula", query = "SELECT rv FROM ReservaVehiculo rv WHERE re.cedulaVendedor LIKE :cedulaVendedor")
+@NamedQuery(name = "ReservaVehiculo.buscarPorCedula", query = "SELECT r FROM ReservaVehiculo r WHERE r.vendedor.cedula LIKE :cedulaVendedor")
 public class ReservaVehiculo extends PanacheEntityBase {
 
     @Id
@@ -22,14 +26,31 @@ public class ReservaVehiculo extends PanacheEntityBase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_reserva_vehiculo_generador")
     private Integer id;
 
-    @Column(name = "reve_cedula_vendedor")
-    private String cedulaVendedor;
-
-    @Column(name = "reve_placa_vehiculo")
-    private String placaVehiculo;
-
     @Column(name = "reve_fecha")
     private LocalDate fecha;
+
+    @Column(name = "reve_estado")
+    private String estado;
+
+    @ManyToOne
+    @JoinColumn(name = "clie_id")
+    private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "vend_id")
+    private Vendedor vendedor;
+
+    @ManyToOne
+    @JoinColumn(name = "sucu_id")
+    private Sucursal sucursal;
+
+    @ManyToOne
+    @JoinColumn(name = "vehi_id")
+    private Vehiculo vehiculo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pago_id")
+    private Pago pago;
 
     public Integer getId() {
         return id;
@@ -39,28 +60,60 @@ public class ReservaVehiculo extends PanacheEntityBase {
         this.id = id;
     }
 
-    public String getCedulaVendedor() {
-        return cedulaVendedor;
-    }
-
-    public void setCedulaVendedor(String cedulaVendedor) {
-        this.cedulaVendedor = cedulaVendedor;
-    }
-
-    public String getPlacaVehiculo() {
-        return placaVehiculo;
-    }
-
-    public void setPlacaVehiculo(String placaVehiculo) {
-        this.placaVehiculo = placaVehiculo;
-    }
-
     public LocalDate getFecha() {
         return fecha;
     }
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public Vendedor getVendedor() {
+        return vendedor;
+    }
+
+    public void setVendedor(Vendedor vendedor) {
+        this.vendedor = vendedor;
+    }
+
+    public Sucursal getSucursal() {
+        return sucursal;
+    }
+
+    public void setSucursal(Sucursal sucursal) {
+        this.sucursal = sucursal;
+    }
+
+    public Pago getPago() {
+        return pago;
+    }
+
+    public void setPago(Pago pago) {
+        this.pago = pago;
+    }
+
+    public Vehiculo getVehiculo() {
+        return vehiculo;
+    }
+
+    public void setVehiculo(Vehiculo vehiculo) {
+        this.vehiculo = vehiculo;
     }
 
 }

@@ -6,10 +6,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
 
 @ApplicationScoped
-@Transactional
 public class ReservaVehiculoRepositoryImpl implements PanacheRepositoryBase<ReservaVehiculo, Integer> {
 
     @Inject

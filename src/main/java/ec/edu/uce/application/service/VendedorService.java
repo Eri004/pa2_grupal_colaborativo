@@ -1,5 +1,7 @@
 package ec.edu.uce.application.service;
 
+import java.util.List;
+
 import ec.edu.uce.domain.model.Vendedor;
 import ec.edu.uce.infrastructure.repository.VendedorRepositoryImpl;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -17,11 +19,19 @@ public class VendedorService {
         this.vendedorRepositoryImpl.persist(vendedor);
     }
 
+    public List<Vendedor> buscarTodos(){
+        return this.vendedorRepositoryImpl.findAll().list();
+    }
+
+    public Vendedor buscarPorCedulaVen(String cedulaVend) {
+        return this.vendedorRepositoryImpl.buscarPorCedula(cedulaVend);
+    }
+
     public Vendedor buscarPorIdVen(Integer id){
         return this.vendedorRepositoryImpl.findById(id);
     }
 
-    public void actualizarVen(Vendedor ven, Integer id){
+    public Vendedor actualizarVen(Vendedor ven, Integer id){
         
         Vendedor nuevo = this.buscarPorIdVen(id);
 
@@ -29,7 +39,7 @@ public class VendedorService {
             nuevo.setNombre(ven.getNombre());
             nuevo.setCedula(ven.getCedula());
         }
-
+        return nuevo;
     }
 
     public void eliminarPorId(Integer id){

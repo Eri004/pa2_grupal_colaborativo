@@ -6,20 +6,22 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cliente")
+@NamedQuery(name = "Cliente.buscarPorCedula", query = "SELECT c FROM Cliente c WHERE c.cedula LIKE :cedula")
 public class Cliente extends PanacheEntityBase {
 
     @Id
     @SequenceGenerator(name = "seq_cliente_generator", sequenceName = "seq_cliente", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cliente_")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_cliente_generator")
     private Integer id;
 
-    @Column(name = "clie_identificacion")
-    private String identificaion;
+    @Column(name = "clie_cedula")
+    private String cedula;
 
     @Column(name = "clie_nombre")
     private String nombre;
@@ -33,14 +35,6 @@ public class Cliente extends PanacheEntityBase {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getIdentificaion() {
-        return identificaion;
-    }
-
-    public void setIdentificaion(String identificaion) {
-        this.identificaion = identificaion;
     }
 
     public String getNombre() {
@@ -59,6 +53,12 @@ public class Cliente extends PanacheEntityBase {
         this.telefono = telefono;
     }
 
-    
+    public String getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
+    }
 
 }

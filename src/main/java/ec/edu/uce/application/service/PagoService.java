@@ -1,5 +1,7 @@
 package ec.edu.uce.application.service;
 
+import java.util.List;
+
 import ec.edu.uce.domain.model.Pago;
 import ec.edu.uce.infrastructure.repository.PagoRepositoryImpl;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,7 +23,7 @@ public class PagoService {
         return this.pagoRepositoryImpl.findById(id);
     }
 
-    public void actualizarCli(Pago pago, Integer id){
+    public Pago actualizarPago(Pago pago, Integer id){
         
         Pago nuevo = this.buscarPorIdPago(id);
 
@@ -30,7 +32,11 @@ public class PagoService {
             nuevo.setMetodoPago(pago.getMetodoPago());;
             nuevo.setMonto(pago.getMonto());;
         }
+        return nuevo;
+    }
 
+    public List<Pago> buscarTodos(){
+        return this.pagoRepositoryImpl.findAll().list();
     }
 
     public void eliminarPorId(Integer id){

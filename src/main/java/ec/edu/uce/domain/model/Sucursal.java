@@ -6,11 +6,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "sucursal")
+@NamedQuery(name = "Sucursal.buscarPorNombre", query = "SELECT s FROM Sucursal s WHERE s.nombre LIKE :nombre")
 public class Sucursal extends PanacheEntityBase {
 
     @Id
