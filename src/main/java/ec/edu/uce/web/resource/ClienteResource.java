@@ -26,14 +26,14 @@ public class ClienteResource {
 
     @Path("/porId/{id}")
     @GET
-    public String buscarPorId(@PathParam("id") Integer id){
-        return this.clienteService.buscarPorIdReactivo(id );
+    public Cliente buscarPorId(@PathParam("id") Integer id){
+        return this.clienteService.buscarPorIdCli(id);
     }
     
     @Path("/guardarCli")
     @POST
     public void guardar(Cliente cliente){
-        this.clienteService.guardarClienteReactivo(cliente);
+        this.clienteService.guardarCli(cliente);
     }
 
     @Path("/actualizarCli/{id}")

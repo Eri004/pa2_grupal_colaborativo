@@ -1,11 +1,11 @@
 package ec.edu.uce.application.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import ec.edu.uce.application.interceptor.Notificacion;
 import ec.edu.uce.domain.model.Cliente;
 import ec.edu.uce.infrastructure.repository.ClienteRepositoryImpl;
-import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.infrastructure.Infrastructure;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -21,6 +21,7 @@ public class ClienteService {
         this.clienteRepositoryImpl.persist(cliente);
     }
 
+    @Notificacion
     public Cliente buscarPorIdCli(Integer id) {
         return this.clienteRepositoryImpl.findById(id);
     }
@@ -29,8 +30,12 @@ public class ClienteService {
         return this.clienteRepositoryImpl.buscarPorCedula(cedulaCli);
     }
 
+    @Notificacion
     public List<Cliente> buscarTodosCls() {
-        return this.clienteRepositoryImpl.findAll().list();
+        List<Cliente> clientes = this.clienteRepositoryImpl.findAll().list();
+        return clientes.parallelStream()
+                .filter(c -> c != null)
+                .collect(Collectors.toList());
     }
 
     public Cliente actualizarCli(Cliente cli, Integer id) {
@@ -49,17 +54,7 @@ public class ClienteService {
         this.clienteRepositoryImpl.delete(this.buscarPorIdCli(id));
     }
 
-    public String buscarPorIdReactivo(Integer id) {
-        Uni.createFrom().item(() -> this.clienteRepositoryImpl.findById(id))
-                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
-        return "Encontrado";
-    }
-
-    public Uni<Cliente> guardarClienteReactivo(Cliente cliente) {
-        return Uni.createFrom().item(() -> {
-            this.guardarCli(cliente);
-            return cliente;
-        }).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
-    }
-
 }
+
+
+

@@ -55,4 +55,12 @@ public class ReservaVehiculoResource {
         System.out.println("Se guardo correctamente");
     }
 
+    @GET
+    @Path("/consultarReactivo/{cedulaCli}/{placa}")
+    public String consultarReactivo(
+            @PathParam("cedulaCli") String cedulaCli,
+            @PathParam("placa") String placa) {
+        return this.reservaVehiculoService.consultarReservaReactiva(cedulaCli, placa);
+    }
+
 }

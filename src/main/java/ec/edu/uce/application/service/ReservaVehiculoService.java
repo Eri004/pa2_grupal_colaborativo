@@ -2,7 +2,10 @@ package ec.edu.uce.application.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
+import ec.edu.uce.application.interceptor.Notificacion;
 import ec.edu.uce.domain.model.Cliente;
 import ec.edu.uce.domain.model.Pago;
 import ec.edu.uce.domain.model.ReservaVehiculo;
@@ -10,6 +13,8 @@ import ec.edu.uce.domain.model.Sucursal;
 import ec.edu.uce.domain.model.Vehiculo;
 import ec.edu.uce.domain.model.Vendedor;
 import ec.edu.uce.infrastructure.repository.ReservaVehiculoRepositoryImpl;
+import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -40,8 +45,12 @@ public class ReservaVehiculoService {
         this.reservaVehiculo.persist(reservaVehiculo);
     }
 
+    @Notificacion
     public List<ReservaVehiculo> buscarTodos() {
-        return this.reservaVehiculo.listAll();
+        List<ReservaVehiculo> lista = this.reservaVehiculo.listAll();
+        return lista.parallelStream()
+                .filter(r -> r != null)
+                .collect(Collectors.toList());
     }
 
     public ReservaVehiculo buscarPorIdRes(Integer id) {
@@ -64,12 +73,13 @@ public class ReservaVehiculoService {
 
     }
 
+    @Notificacion
     public ReservaVehiculo nuevaReserva(ReservaVehiculo nuevaReserva) {
 
-        String cedulaCli = nuevaReserva.getCliente().getCedula() ;
+        String cedulaCli = nuevaReserva.getCliente().getCedula();
         String cedulaVend = nuevaReserva.getVendedor().getCedula();
         String placa = nuevaReserva.getVehiculo().getPlaca();
-        String nombreSuc =  nuevaReserva.getSucursal().getNombre();
+        String nombreSuc = nuevaReserva.getSucursal().getNombre();
 
         Double montoPago = nuevaReserva.getPago().getMonto();
         String metodoPago = nuevaReserva.getPago().getMetodoPago();
@@ -97,7 +107,46 @@ public class ReservaVehiculoService {
 
         this.guardarRes(res);
 
+        CompletableFuture.runAsync(() -> {
+            System.out.println("Reserva #" + res.getId()
+                    + " confirmada exitosamente en hilo: " + Thread.currentThread().getName());
+        });
+
         return res;
+    }
+
+    @Notificacion
+    public String consultarReservaReactiva(String cedulaCli, String placa) {
+        System.out.println("[RESERVA REACTIVA HILO]: " + Thread.currentThread().getName()
+                + " (ID: " + Thread.currentThread().threadId() + ")");
+
+        long inicio = System.currentTimeMillis();
+
+        Uni<Cliente> clienteUni = Uni.createFrom().item(() -> this.clienteService.buscarPorCedulaCli(cedulaCli))
+                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+
+        Uni<Vehiculo> vehiculoUni = Uni.createFrom().item(() -> this.vehiculoService.buscarPorPlaca(placa))
+                .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+
+        Uni<String> mensajeFinal = Uni.combine().all().unis(clienteUni, vehiculoUni).asTuple().map(resultado -> {
+            Cliente cliente = resultado.getItem1();
+            Vehiculo vehiculo = resultado.getItem2();
+
+            String mensaje = "Se realizo con exito la consulta reactiva."
+                    + "\nCliente obtenido: " + (cliente != null ? cliente.getNombre() : "No encontrado")
+                    + "\nVehiculo obtenido: "
+                    + (vehiculo != null ? vehiculo.getModelo() + " (" + vehiculo.getPlaca() + ")" : "No encontrado");
+
+            System.out.println(mensaje);
+
+            long fin = System.currentTimeMillis();
+            long tiempoTranscurrido = fin - inicio;
+            System.out.println("Tiempo demora: " + tiempoTranscurrido + " ms");
+
+            return mensaje;
+        });
+
+        return mensajeFinal.await().indefinitely();
     }
 
     public void eliminarPorIdRes(Integer id) {
