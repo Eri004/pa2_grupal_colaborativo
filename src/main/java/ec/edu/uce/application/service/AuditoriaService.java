@@ -2,7 +2,6 @@ package ec.edu.uce.application.service;
 
 import java.util.List;
 
-import ec.edu.uce.application.interceptor.Auditar;
 import ec.edu.uce.domain.model.Auditoria;
 import ec.edu.uce.infraestructure.repository.AuditoriaRepositoryImpl;
 import jakarta.enterprise.context.ApplicationScoped;
