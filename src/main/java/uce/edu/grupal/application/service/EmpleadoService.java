@@ -16,6 +16,11 @@ public class EmpleadoService {
     private EmpleadoRepositoryImpl er;
 
     public void guardar(Empleado empleado) {
+        Empleado existe = this.er.buscarPorCedula(empleado.getCedula());
+
+        if (existe != null) {
+            throw new RuntimeException("Ya existe un empleado con la cédula: " + empleado.getCedula());
+        }
         empleado.setEstado("ACTIVO");
         this.er.persist(empleado);
     }

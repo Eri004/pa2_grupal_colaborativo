@@ -1,7 +1,6 @@
 package uce.edu.grupal.domain.model;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
@@ -38,9 +37,6 @@ public class ReservaVehiculo extends PanacheEntityBase {
 
     @Column(name = "rese_fecha")
     private LocalDate fecha;
-
-    @Column(name = "rese_hora")
-    private LocalTime hora;
 
     @Column(name = "rese_estado")
     private String estado;
@@ -95,14 +91,6 @@ public class ReservaVehiculo extends PanacheEntityBase {
 
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
-    }
-
-    public LocalTime getHora() {
-        return hora;
-    }
-
-    public void setHora(LocalTime hora) {
-        this.hora = hora;
     }
 
     public String getEstado() {

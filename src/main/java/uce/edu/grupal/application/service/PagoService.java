@@ -1,5 +1,6 @@
 package uce.edu.grupal.application.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -42,7 +43,7 @@ public class PagoService {
 
         pago.setReserva(reserva);
         pago.setMonto(dto.getMonto());
-        pago.setFechaPago(dto.getFechaPago());
+        pago.setFechaPago(LocalDate.now());
         pago.setMetodoPago(dto.getMetodoPago());
 
         pago.setNumeroFactura(generarNumeroFactura());
@@ -72,7 +73,7 @@ public class PagoService {
         Pago pago = this.pr.buscarPorFactura(factura);
 
         pago.setMonto(dto.getMonto());
-        pago.setFechaPago(dto.getFechaPago());
+        pago.setFechaPago(LocalDate.now());
         pago.setMetodoPago(dto.getMetodoPago());
         pago.setEstadoPago(dto.getEstadoPago());
     }

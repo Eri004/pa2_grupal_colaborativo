@@ -66,10 +66,8 @@ public class ReservaVehiculoService {
         reserva.setCliente(cliente);
         reserva.setVehiculo(vehiculo);
         reserva.setEmpleado(empleado);
-        reserva.setFecha(dto.getFecha());
-        reserva.setHora(dto.getHora());
+        reserva.setFecha(LocalDate.now());
 
-        // valores controlados por el sistema
         reserva.setEstado("CONFIRMADA");
         reserva.setCodigoReserva(generarCodigoReserva());
 
@@ -134,7 +132,6 @@ public class ReservaVehiculoService {
         r.setEmpleado(reserva.getEmpleado());
         r.setVehiculo(reserva.getVehiculo());
         r.setFecha(reserva.getFecha());
-        r.setHora(reserva.getHora());
         r.setEstado(reserva.getEstado());
 
     }
@@ -153,7 +150,6 @@ public class ReservaVehiculoService {
         reserva.setVehiculo(vehiculo);
         reserva.setEmpleado(empleado);
         reserva.setFecha(dto.getFecha());
-        reserva.setHora(dto.getHora());
         reserva.setEstado(dto.getEstado());
 
     }
