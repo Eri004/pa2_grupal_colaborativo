@@ -13,14 +13,6 @@ import jakarta.persistence.Table;
 @Entity
 public class Empleado extends PanacheEntityBase {
 
-    public String getCedula() {
-        return cedula;
-    }
-
-    public void setCedula(String cedula) {
-        this.cedula = cedula;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_empleado_generador")
     @SequenceGenerator(name = "seq_empleado_generador", sequenceName = "seq_empleado", allocationSize = 1)
@@ -91,6 +83,14 @@ public class Empleado extends PanacheEntityBase {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+        public String getCedula() {
+        return cedula;
+    }
+
+    public void setCedula(String cedula) {
+        this.cedula = cedula;
     }
     
     @Override

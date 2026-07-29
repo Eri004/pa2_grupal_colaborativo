@@ -51,8 +51,8 @@ public class PagoResource {
     }
 
     @DELETE
-    @Path("/{id}")
-    public void eliminar(@PathParam("id") Integer id) {
-        this.ps.eliminar(id);
+    @Path("/{codigo}")
+    public void eliminar(@PathParam("codigo") String codigo) {
+        this.ps.eliminar(codigo);
     }
 }

@@ -64,8 +64,16 @@ public class PagoService {
         return this.pr.listAll();
     }
 
-    public void eliminar(Integer id) {
-        this.pr.deleteById(id);
+    public void eliminar(String numFactura) {
+        Pago pago= this.pr.buscarPorFactura(numFactura);
+
+         if (pago == null) {
+            throw new RuntimeException("No existe el pago con codigo: " + numFactura);
+        }
+        
+        pago.setEstadoPago("CANCELADO");
+
+
     }
 
     public void actualizar(String factura, PagoRequestDTO dto) {
