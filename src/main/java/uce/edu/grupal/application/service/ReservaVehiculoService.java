@@ -2,166 +2,111 @@ package uce.edu.grupal.application.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import uce.edu.grupal.application.interceptor.Auditoria;
 import uce.edu.grupal.domain.model.Cliente;
-import uce.edu.grupal.domain.model.Empleado;
+import uce.edu.grupal.domain.model.Pago;
+import uce.edu.grupal.domain.model.Vendedor;
 import uce.edu.grupal.domain.model.ReservaVehiculo;
 import uce.edu.grupal.domain.model.Vehiculo;
 import uce.edu.grupal.infrastructure.repository.ReservaVehiculoRepositoryImpl;
-import uce.edu.grupal.web.resources.request.ReservaRequestDTO;
 
 @ApplicationScoped
 @Transactional
 public class ReservaVehiculoService {
-
-    @Inject
-    private ReservaVehiculoRepositoryImpl rr;
-
-    @Inject
-    private ClienteService cs;
-
-    @Inject
-    private EmpleadoService es;
+@Inject
+    private ReservaVehiculoRepositoryImpl rri;
 
     @Inject
     private VehiculoService vs;
 
-    public void guardar(ReservaRequestDTO dto) {
+    @Inject
+    private VendedorService vends;
 
-        Cliente cliente = this.cs.buscarPorCedula(dto.getCedulaCliente());
+    @Inject
+    private PagoService ps;
 
-        if (cliente == null) {
-            throw new RuntimeException("No existe el cliente: " + dto.getCedulaCliente());
-        }
+    @Inject
+    private ClienteService cs;
 
-        Vehiculo vehiculo = this.vs.buscarPorPlaca(dto.getPlacaVehiculo());
-
-        if (vehiculo == null) {
-            throw new RuntimeException("No existe el vehículo: " + dto.getPlacaVehiculo());
-        }
-
-        Empleado empleado = this.es.buscarPorCedula(dto.getCedulaEmpleado());
-
-        if (empleado == null) {
-            throw new RuntimeException("No existe el empleado: " + dto.getCedulaEmpleado());
-        }
-
-        if (!cliente.getEstado().equals("ACTIVO")) {
-            throw new RuntimeException("El cliente no está activo");
-        }
-
-        if (!empleado.getEstado().equals("ACTIVO")) {
-            throw new RuntimeException("El empleado no está activo");
-        }
-
-        if (!vehiculo.getEstado().equals("DISPONIBLE")) {
-            throw new RuntimeException("El vehículo no está disponible");
-        }
-
-        ReservaVehiculo reserva = new ReservaVehiculo();
-
-        reserva.setCliente(cliente);
-        reserva.setVehiculo(vehiculo);
-        reserva.setEmpleado(empleado);
-        reserva.setFecha(LocalDate.now());
-
-        reserva.setEstado("CONFIRMADA");
-        reserva.setCodigoReserva(generarCodigoReserva());
-
-        this.rr.persist(reserva);
+    public void guardar(ReservaVehiculo c) {
+        this.rri.persist(c);
     }
 
-    public void guardar(ReservaVehiculo reserva) {
-        if (!reserva.getCliente().getEstado().equals("ACTIVO")) {
-            throw new RuntimeException("El cliente no está activo");
-        }
+    @Auditoria
+    public void nuevaReserva(ReservaVehiculo r) {
 
-        if (!reserva.getEmpleado().getEstado().equals("ACTIVO")) {
-            throw new RuntimeException("El empleado no está activo");
-        }
+        CompletableFuture<Void> completableCliente = CompletableFuture.runAsync(() -> {
+            this.cs.guardar(r.getCliente());
+        });
 
-        if (!reserva.getVehiculo().getEstado().equals("DISPONIBLE")) {
-            throw new RuntimeException("El vehículo no está disponible");
-        }
+        CompletableFuture<Void> completablePago = CompletableFuture.runAsync(() -> {
+            this.ps.guardar(r.getPago());
+        });
 
-        reserva.setEstado("CONFIRMADA");
-        reserva.setCodigoReserva(generarCodigoReserva());
+        CompletableFuture.allOf(completableCliente, completablePago).join();
 
-        this.rr.persist(reserva);
+        ReservaVehiculo nuevo = new ReservaVehiculo();
+        nuevo.setFecha(r.getFecha());
+        nuevo.setEstado(r.getEstado());
+
+        nuevo.setCliente(r.getCliente());
+        nuevo.setPago(r.getPago());
+        
+        nuevo.setVehiculo(this.vs.buscarPorId(r.getVehiculo().getId()));
+        nuevo.setVendedor(this.vends.buscarPorId(r.getVendedor().getId()));
+
+        this.rri.persist(nuevo);
+    }
+
+    public void actualizar(Integer id, ReservaVehiculo r) {
+
+        ReservaVehiculo nuevo = this.rri.findById(id);
+
+        nuevo.setFecha(r.getFecha());
+        nuevo.setEstado(r.getEstado());
+        nuevo.setCliente(this.cs.actualizar(r.getCliente().getId(), r.getCliente()));
+        nuevo.setPago(this.ps.buscarPorId(r.getPago().getId()));
+        nuevo.setVehiculo(this.vs.buscarPorId(r.getVehiculo().getId()));
+        nuevo.setVendedor(this.vends.buscarPorId(r.getVendedor().getId()));
+
     }
 
     public ReservaVehiculo buscarPorId(Integer id) {
-        return this.rr.findById(id);
+        return this.rri.findById(id);
     }
 
-    public List<ReservaVehiculo> buscarTodos() {
-        return this.rr.listAll();
+    public void eliminar(Integer id) {
+        this.rri.deleteById(id);
+
     }
 
     public List<ReservaVehiculo> buscarPorFecha(LocalDate fecha) {
-        return this.rr.buscarPorFecha(fecha);
-    }
 
-    public List<ReservaVehiculo> buscarPorCedulaCliente(String cedula) {
-        return this.rr.buscarPorCedulaCliente(cedula);
-    }
-
-    public List<ReservaVehiculo> buscarPorPlaca(String placa) {
-        return this.rr.buscarPorPlaca(placa);
-    }
-
-    public void eliminar(String codigoReserva) {
-
-        ReservaVehiculo reserva = this.rr.buscarPorCodigo(codigoReserva);
-
-        if (reserva == null) {
-            throw new RuntimeException("No existe la reserva: " + codigoReserva);
-        }
-
-        reserva.setEstado("CANCELADA");
-    }
-
-    public void actualizar(ReservaVehiculo reserva) {
-
-        ReservaVehiculo r = this.rr.findById(reserva.getId());
-
-        r.setCliente(reserva.getCliente());
-        r.setEmpleado(reserva.getEmpleado());
-        r.setVehiculo(reserva.getVehiculo());
-        r.setFecha(reserva.getFecha());
-        r.setEstado(reserva.getEstado());
+        return this.rri.listAll()
+                .parallelStream()
+                .filter(r -> r.getFecha().equals(fecha))
+                .collect(Collectors.toList());
 
     }
 
-    public void actualizar(Integer id, ReservaRequestDTO dto) {
-
-        ReservaVehiculo reserva = this.rr.findById(id);
-
-        Cliente cliente = cs.buscarPorCedula(dto.getCedulaCliente());
-
-        Vehiculo vehiculo = vs.buscarPorPlaca(dto.getPlacaVehiculo());
-
-        Empleado empleado = es.buscarPorCedula(dto.getCedulaEmpleado());
-
-        reserva.setCliente(cliente);
-        reserva.setVehiculo(vehiculo);
-        reserva.setEmpleado(empleado);
-        reserva.setFecha(dto.getFecha());
-        reserva.setEstado(dto.getEstado());
-
+    public ReservaVehiculo buscarPorPlacaCedulaFecha(String placaVehiculo, String cedulaVendedor, LocalDate fecha) {
+        return this.rri.listAll()
+                .parallelStream()
+                .filter(r -> r.getVehiculo() != null && r.getVehiculo().getPlaca().equals(placaVehiculo))
+                .filter(r -> r.getVendedor() != null && r.getVendedor().getCedula().equals(cedulaVendedor))
+                .filter(r -> r.getFecha().equals(fecha))
+                .findFirst()
+                .orElse(null);
     }
 
-    private String generarCodigoReserva() {
-
-        Long numero = this.rr.count() + 1;
-
-        return String.format("RES-%06d", numero);
-    }
-
-    public ReservaVehiculo buscarPorCodigo(String codigoReserva) {
-        return this.rr.buscarPorCodigo(codigoReserva);
+    public List<ReservaVehiculo> buscarTodos(){
+        return this.rri.findAll().list();
     }
 }

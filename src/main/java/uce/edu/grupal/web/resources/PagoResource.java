@@ -10,49 +10,44 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import uce.edu.grupal.application.service.PagoService;
+import uce.edu.grupal.domain.model.Cliente;
 import uce.edu.grupal.domain.model.Pago;
-import uce.edu.grupal.web.resources.request.PagoRequestDTO;
 
-@Path("/pagos")
+@Path("/pago")
 public class PagoResource {
 
     @Inject
     private PagoService ps;
 
-    @GET
-    public List<Pago> obtenerTodos() {
-        return this.ps.buscarTodos();
+    @Path("/guardar")
+    @POST
+    public void guardar(Pago c){
+        this.ps.guardar(c);
     }
 
+    @Path("/actualizar/{id}")
+    @PUT
+    public void actualizar(@PathParam("id") Integer id, Pago p){
+        this.ps.actualizar(id, p);
+    }
+
+    @Path("/porId/{id}")
     @GET
-    @Path("/{id}")
-    public Pago obtenerPorId(@PathParam("id") Integer id) {
+    public Pago buscarPorId(@PathParam("id") Integer id){
         return this.ps.buscarPorId(id);
     }
 
-    @GET
-    @Path("/reserva/{idReserva}")
-    public Pago obtenerPorReserva(@PathParam("idReserva") Integer idReserva) {
-        return this.ps.buscarPorReserva(idReserva);
-    }
-
-    @POST
-    public void guardar(PagoRequestDTO dto) {
-        this.ps.guardar(dto);
-    }
-
-    @PUT
-    @Path("/{factura}")
-    public void actualizar(
-            @PathParam("factura") String factura,
-            PagoRequestDTO dto) {
-
-        this.ps.actualizar(factura, dto);
-    }
-
+    @Path("/eliminar/{id}")
     @DELETE
-    @Path("/{codigo}")
-    public void eliminar(@PathParam("codigo") String codigo) {
-        this.ps.eliminar(codigo);
+    public void eliminar(@PathParam("id") Integer id){
+        this.ps.eliminar(id);
     }
+
+    @Path("/buscarTodos")
+    @GET
+    public List<Pago> buscarTodos(){
+        return this.ps.buscarTodos();
+    }
+
+
 }

@@ -9,33 +9,27 @@ import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
-@Table(name = "empleado")
+@Table(name = "vendedor")
 @Entity
-public class Empleado extends PanacheEntityBase {
+public class Vendedor extends PanacheEntityBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_empleado_generador")
-    @SequenceGenerator(name = "seq_empleado_generador", sequenceName = "seq_empleado", allocationSize = 1)
-    @Column(name = "empl_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_vendedor_generador")
+    @SequenceGenerator(name = "seq_vendedor_generador", sequenceName = "seq_vendedor", allocationSize = 1)
+    @Column(name = "vend_id")
     private Integer id;
 
-    @Column(name = "empl_cedula", unique = true)
+    @Column(name = "vend_cedula", unique = true)
     private String cedula;
 
-    @Column(name = "empl_nombres")
+    @Column(name = "vend_nombres")
     private String nombres;
 
-    @Column(name = "empl_apellidos")
+    @Column(name = "vend_apellidos")
     private String apellidos;
 
-    @Column(name = "empl_cargo")
+    @Column(name = "vend_cargo")
     private String cargo;
-
-    @Column(name = "empl_telefono")
-    private String telefono;
-
-    @Column(name = "empl_estado")
-    private String estado;
 
     public Integer getId() {
         return id;
@@ -69,22 +63,6 @@ public class Empleado extends PanacheEntityBase {
         this.cargo = cargo;
     }
 
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
         public String getCedula() {
         return cedula;
     }
@@ -97,7 +75,7 @@ public class Empleado extends PanacheEntityBase {
     public String toString() {
         return "Empleado [id=" + id + ", nombres=" + nombres
                 + ", apellidos=" + apellidos + ", cargo=" + cargo
-                + ", telefono=" + telefono + "]";
+                + "]";
     }
 
 }

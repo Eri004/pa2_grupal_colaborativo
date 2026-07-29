@@ -24,24 +24,12 @@ public class Pago extends PanacheEntityBase {
     @Column(name = "pago_id")
     private Integer id;
 
-    @OneToOne
-    @JoinColumn(name = "rese_id")
-    private ReservaVehiculo reserva;
-
     @Column(name = "pago_monto")
     private BigDecimal monto;
-
-    @Column(name = "pago_fecha")
-    private LocalDate fechaPago;
 
     @Column(name = "pago_metodo")
     private String metodoPago;
 
-    @Column(name = "pago_estado")
-    private String estadoPago;
-
-    @Column(name = "pago_factura"   )
-    private String numeroFactura;
 
     public Integer getId() {
         return id;
@@ -51,13 +39,6 @@ public class Pago extends PanacheEntityBase {
         this.id = id;
     }
 
-    public ReservaVehiculo getReserva() {
-        return reserva;
-    }
-
-    public void setReserva(ReservaVehiculo reserva) {
-        this.reserva = reserva;
-    }
 
     public BigDecimal getMonto() {
         return monto;
@@ -67,13 +48,6 @@ public class Pago extends PanacheEntityBase {
         this.monto = monto;
     }
 
-    public LocalDate getFechaPago() {
-        return fechaPago;
-    }
-
-    public void setFechaPago(LocalDate fechaPago) {
-        this.fechaPago = fechaPago;
-    }
 
     public String getMetodoPago() {
         return metodoPago;
@@ -81,22 +55,6 @@ public class Pago extends PanacheEntityBase {
 
     public void setMetodoPago(String metodoPago) {
         this.metodoPago = metodoPago;
-    }
-
-    public String getEstadoPago() {
-        return estadoPago;
-    }
-
-    public void setEstadoPago(String estadoPago) {
-        this.estadoPago = estadoPago;
-    }
-
-    public String getNumeroFactura() {
-        return numeroFactura;
-    }
-
-    public void setNumeroFactura(String numeroFactura) {
-        this.numeroFactura = numeroFactura;
     }
 
 

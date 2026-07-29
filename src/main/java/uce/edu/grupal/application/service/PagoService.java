@@ -1,96 +1,45 @@
 package uce.edu.grupal.application.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import uce.edu.grupal.domain.model.Pago;
-import uce.edu.grupal.domain.model.ReservaVehiculo;
 import uce.edu.grupal.infrastructure.repository.PagoRepositoryImpl;
-import uce.edu.grupal.web.resources.request.PagoRequestDTO;
 
 @ApplicationScoped
 @Transactional
 public class PagoService {
 
     @Inject
-    private PagoRepositoryImpl pr;
+    private PagoRepositoryImpl pri;
 
-    @Inject
-    private ReservaVehiculoService rs;
-
-    public void guardar(PagoRequestDTO dto) {
-
-        ReservaVehiculo reserva = this.rs.buscarPorCodigo(dto.getCodigoReserva());
-
-        if (reserva == null) {
-            throw new RuntimeException("No existe la reserva: " + dto.getCodigoReserva());
-        }
-
-        if (!reserva.getEstado().equals("CONFIRMADA")) {
-            throw new RuntimeException("La reserva no está confirmada");
-        }
-
-        Pago existe = this.pr.buscarPorReserva(reserva.getId());
-
-        if (existe != null) {
-            throw new RuntimeException("La reserva ya tiene un pago registrado");
-        }
-
-        Pago pago = new Pago();
-
-        pago.setReserva(reserva);
-        pago.setMonto(dto.getMonto());
-        pago.setFechaPago(LocalDate.now());
-        pago.setMetodoPago(dto.getMetodoPago());
-
-        pago.setNumeroFactura(generarNumeroFactura());
-        pago.setEstadoPago("PAGADO");
-
-        this.pr.persist(pago);
+    public void guardar(Pago c){
+        this.pri.persist(c);
     }
 
-    public Pago buscarPorId(Integer id) {
-        return this.pr.findById(id);
-    }
-
-    public Pago buscarPorReserva(Integer idReserva) {
-        return this.pr.buscarPorReserva(idReserva);
-    }
-
-    public List<Pago> buscarTodos() {
-        return this.pr.listAll();
-    }
-
-    public void eliminar(String numFactura) {
-        Pago pago= this.pr.buscarPorFactura(numFactura);
-
-         if (pago == null) {
-            throw new RuntimeException("No existe el pago con codigo: " + numFactura);
-        }
-        
-        pago.setEstadoPago("CANCELADO");
-
+    public void actualizar(Integer id, Pago p){
+        Pago nuevo = this.pri.findById(id);
+        nuevo.setMonto(p.getMonto());
+        nuevo.setMetodoPago(p.getMetodoPago());
 
     }
 
-    public void actualizar(String factura, PagoRequestDTO dto) {
+    public Pago buscarPorId(Integer id){
+        return this.pri.findById(id);
 
-        Pago pago = this.pr.buscarPorFactura(factura);
-
-        pago.setMonto(dto.getMonto());
-        pago.setFechaPago(LocalDate.now());
-        pago.setMetodoPago(dto.getMetodoPago());
-        pago.setEstadoPago(dto.getEstadoPago());
     }
 
-    private String generarNumeroFactura() {
+    public void eliminar(Integer id){
 
-        long numero = System.currentTimeMillis();
+        this.pri.deleteById(id);
 
-        return "FAC-" + numero;
     }
+
+    public List<Pago> buscarTodos(){
+        return this.pri.findAll().list();
+    }
+
 
 }

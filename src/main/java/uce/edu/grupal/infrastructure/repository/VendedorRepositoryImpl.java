@@ -5,21 +5,20 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import uce.edu.grupal.domain.model.Vehiculo;
+import uce.edu.grupal.domain.model.Vendedor;
 
 @ApplicationScoped
-public class VehiculoRepositoryImpl implements PanacheRepositoryBase<Vehiculo, Integer> {
+public class VendedorRepositoryImpl implements PanacheRepositoryBase<Vendedor, Integer> {
 
     @Inject
     private EntityManager em;
 
-    public Vehiculo buscarPorPlaca(String placa){
+    public Vendedor buscarPorCedula(String cedula){
 
-        TypedQuery<Vehiculo> miQuery = this.em.createQuery("SELECT v FROM Vehiculo v WHERE v.placa = :placa", Vehiculo.class);
-        miQuery.setParameter("placa", placa);
-
+        TypedQuery<Vendedor> miQuery = this.em.createQuery("SELECT v FROM Vendedor v WHERE v.cedula = :cedula", Vendedor.class);
+        miQuery.setParameter("cedula", cedula);
         return miQuery.getSingleResult();
 
     }
-    
+
 }

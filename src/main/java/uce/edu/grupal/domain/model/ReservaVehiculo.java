@@ -3,6 +3,7 @@ package uce.edu.grupal.domain.model;
 import java.time.LocalDate;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -32,8 +34,8 @@ public class ReservaVehiculo extends PanacheEntityBase {
     private Vehiculo vehiculo;
 
     @ManyToOne
-    @JoinColumn(name = "empl_id")
-    private Empleado empleado;
+    @JoinColumn(name = "vend_id")
+    private Vendedor vendedor;
 
     @Column(name = "rese_fecha")
     private LocalDate fecha;
@@ -41,17 +43,9 @@ public class ReservaVehiculo extends PanacheEntityBase {
     @Column(name = "rese_estado")
     private String estado;
 
-    @Column(name = "rese_codigo")
-    private String codigoReserva;
-
-    public String getCodigoReserva() {
-        return codigoReserva;
-    }
-
-    public void setCodigoReserva(String codigoReserva) {
-        this.codigoReserva = codigoReserva;
-    }
-
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pago_id")
+    private Pago pago;
 
     public Integer getId() {
         return id;
@@ -60,7 +54,7 @@ public class ReservaVehiculo extends PanacheEntityBase {
     public void setId(Integer id) {
         this.id = id;
     }
-
+    
     public Cliente getCliente() {
         return cliente;
     }
@@ -77,12 +71,12 @@ public class ReservaVehiculo extends PanacheEntityBase {
         this.vehiculo = vehiculo;
     }
 
-    public Empleado getEmpleado() {
-        return empleado;
+    public Vendedor getVendedor() {
+        return vendedor;
     }
 
-    public void setEmpleado(Empleado empleado) {
-        this.empleado = empleado;
+    public void setVendedor(Vendedor vendedor) {
+        this.vendedor = vendedor;
     }
 
     public LocalDate getFecha() {
@@ -99,6 +93,14 @@ public class ReservaVehiculo extends PanacheEntityBase {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public Pago getPago() {
+        return pago;
+    }
+
+    public void setPago(Pago pago) {
+        this.pago = pago;
     }
 
 }

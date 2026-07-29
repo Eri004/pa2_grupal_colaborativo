@@ -2,6 +2,7 @@ package uce.edu.grupal.application.service;
 
 import java.util.List;
 
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -16,37 +17,40 @@ public class ClienteService {
     private ClienteRepositoryImpl cr;
 
     public void guardar(Cliente cliente) {
-        cliente.setEstado("ACTIVO");
         this.cr.persist(cliente);
     }
 
-    public Cliente buscarPorId(Integer id) {
-        return this.cr.findById(id);
-    }
-
-    public Cliente buscarPorCedula(String cedula) {
-        return this.cr.buscarPorCedula(cedula);
-    }
-
-    public List<Cliente> buscarTodos() {
-        return this.cr.listAll();
-    }
-
-    public void eliminar(String cedula) {
-        Cliente c = this.cr.buscarPorCedula(cedula);
-
-        c.setEstado("INACTIVO");
-
-    }
-
-    public void actualizar(Cliente cliente) {
-
+    public Cliente actualizar(Integer id, Cliente cliente) {
         Cliente c = this.cr.buscarPorCedula(cliente.getCedula());
         c.setCedula(cliente.getCedula());
         c.setNombres(cliente.getNombres());
         c.setApellidos(cliente.getApellidos());
         c.setTelefono(cliente.getTelefono());
         c.setCorreo(cliente.getCorreo());
+        return c;
 
     }
+
+    public Cliente buscarPorId(Integer id) {
+        return this.cr.findById(id);
+    }
+
+    public void eliminar(Integer id){
+        Cliente cli = this.buscarPorId(id);
+        this.cr.delete(cli);
+    }
+
+    public Cliente eliminarPorCedula(String cedula) {
+        Cliente c = this.cr.buscarPorCedula(cedula);
+        return c;
+    }
+
+    public List<Cliente> buscarTodos() {
+        return this.cr.listAll();
+    }
+
+    public Cliente buscarPorCedula(String cedula) {
+        return this.cr.buscarPorCedula(cedula);
+    }
+
 }

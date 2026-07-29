@@ -2,9 +2,13 @@ package uce.edu.grupal.application.service;
 
 import java.util.List;
 
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import uce.edu.grupal.domain.model.ReservaVehiculo;
 import uce.edu.grupal.domain.model.Vehiculo;
 import uce.edu.grupal.infrastructure.repository.VehiculoRepositoryImpl;
 
@@ -16,7 +20,6 @@ public class VehiculoService {
     private VehiculoRepositoryImpl vr;
 
     public void guardar(Vehiculo vehiculo) {
-        vehiculo.setEstado("DISPONIBLE");
         this.vr.persist(vehiculo);
     }
 
@@ -24,31 +27,45 @@ public class VehiculoService {
         return this.vr.findById(id);
     }
 
-    public Vehiculo buscarPorPlaca(String placa) {
-        return this.vr.buscarPorPlaca(placa);
-    }
-
     public List<Vehiculo> buscarTodos() {
         return this.vr.listAll();
     }
 
-    public void actualizar(Vehiculo vehiculo) {
+    public void actualizarPorPlaca(String placa, Vehiculo vehiculo) {
         Vehiculo v = this.vr.buscarPorPlaca(vehiculo.getPlaca());
 
         v.setPlaca(vehiculo.getPlaca());
         v.setMarca(vehiculo.getMarca());
         v.setModelo(vehiculo.getModelo());
-        v.setColor(vehiculo.getColor());
-        v.setAnio(vehiculo.getAnio());
-        v.setEstado(vehiculo.getEstado());
     }
 
-    public void eliminar(String placa) {
+    public void actualizar(Integer id, Vehiculo c){
+        Vehiculo nuevo = this.vr.findById(id);
+        nuevo.setPlaca(c.getPlaca());
+
+    }
+
+    public void eliminarPorPlaca(String placa) {
         Vehiculo v = this.vr.buscarPorPlaca(placa);
-        if (v == null) {
-            throw new RuntimeException("Vehículo no encontrado");
-        }
-        v.setEstado("INACTIVO");
+        this.vr.delete(v);
+    }
+
+    public void eliminar(Integer id){
+        Vehiculo vehiculo = this.buscarPorId(id);
+        this.vr.delete(vehiculo);
+    }
+
+    public Vehiculo buscarPorPlaca(String placa){
+
+        return this.vr.buscarPorPlaca(placa);
+        
+    }
+
+    public Uni<Vehiculo> buscarPorPlacaPromesa(String placa) {
+
+        return Uni.createFrom().item(this.vr.buscarPorPlaca(placa));
 
     }
+
+
 }

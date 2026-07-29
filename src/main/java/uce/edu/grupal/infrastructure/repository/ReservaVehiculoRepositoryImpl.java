@@ -5,24 +5,24 @@ import java.util.List;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import uce.edu.grupal.domain.model.ReservaVehiculo;
 
 @ApplicationScoped
 public class ReservaVehiculoRepositoryImpl implements PanacheRepositoryBase<ReservaVehiculo, Integer> {
 
-    public List<ReservaVehiculo> buscarPorFecha(LocalDate fecha) {
-        return find("fecha", fecha).list();
+    @Inject
+    private EntityManager em;
+
+    public ReservaVehiculo buscarPorFecha(LocalDate fecha){
+
+        TypedQuery<ReservaVehiculo> miQuery = this.em.createQuery("SELECT r FROM Reserva r WHERE r.fecha = :fecha", ReservaVehiculo.class);
+        miQuery.setParameter("fecha", fecha);
+
+        return miQuery.getSingleResult();
+
     }
 
-    public List<ReservaVehiculo> buscarPorCedulaCliente(String cedula) {
-        return find("cliente.cedula", cedula).list();
-    }
-
-    public List<ReservaVehiculo> buscarPorPlaca(String placa) {
-        return find("vehiculo.placa", placa).list();
-    }
-
-    public ReservaVehiculo buscarPorCodigo(String codigoReserva) {
-        return find("codigoReserva", codigoReserva).firstResult();
-    }
 }

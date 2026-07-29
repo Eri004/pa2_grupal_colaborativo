@@ -34,9 +34,6 @@ public class Cliente extends PanacheEntityBase {
     @Column(name = "clie_correo", nullable = false, unique = true)
     private String correo;
 
-    @Column(name = "clie_estado")
-    private String estado;
-
     public String getCedula() {
         return cedula;
     }
@@ -83,14 +80,6 @@ public class Cliente extends PanacheEntityBase {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
     }
 
     @Override

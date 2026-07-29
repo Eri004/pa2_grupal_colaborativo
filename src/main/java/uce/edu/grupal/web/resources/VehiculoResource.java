@@ -2,6 +2,7 @@ package uce.edu.grupal.web.resources;
 
 import java.util.List;
 
+import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import uce.edu.grupal.application.service.VehiculoService;
+import uce.edu.grupal.domain.model.ReservaVehiculo;
 import uce.edu.grupal.domain.model.Vehiculo;
 
 @Path("/vehiculos")
@@ -18,30 +20,62 @@ public class VehiculoResource {
     @Inject
     private VehiculoService vs;
 
-    @GET
-    public List<Vehiculo> obtenerTodos() {
-        return this.vs.buscarTodos();
+    @Path("/guardar")
+    @POST
+    public void guardar(Vehiculo c) {
+
+        this.vs.guardar(c);
+
     }
 
+    @Path("/actualizar/{id}")
+    @PUT
+    public void actualizar(@PathParam("id") Integer id, Vehiculo c) {
+
+        this.vs.actualizar(id, c);
+
+    }
+
+    @Path("/porId/{id}")
     @GET
-    @Path("/{placa}")
-    public Vehiculo obtenerPorPlaca(@PathParam("placa") String placa) {
+    public Vehiculo buscarPorId(@PathParam("id") Integer id) {
+
+        return this.vs.buscarPorId(id);
+
+    }
+
+    @Path("/eliminar/{id}")
+    @DELETE
+    public void eliminar(@PathParam("id") Integer id) {
+
+        this.vs.eliminar(id);
+
+    }
+
+    @Path("/eliminarPorPlaca/{placa}")
+    @DELETE
+    public void eliminarPorPlaca(@PathParam("placa") String placa) {
+        this.vs.eliminarPorPlaca(placa);
+    }
+
+    @Path("/buscarPorPlaca/{placa}")
+    @GET
+    public Vehiculo buscarPorPlaca(@PathParam("placa") String placa) {
         return this.vs.buscarPorPlaca(placa);
     }
 
-    @POST
-    public void guardar(Vehiculo vehiculo) {
-        this.vs.guardar(vehiculo);
-    }
-
+    @Path("/actualizarPorPlaca/{placa}")
     @PUT
-    public void actualizar(Vehiculo vehiculo) {
-        this.vs.actualizar(vehiculo);
+    public void actualizarPorPlaca(@PathParam("placa") String placa, Vehiculo c) {
+        this.vs.actualizarPorPlaca(placa, c);
+
     }
 
-    @DELETE
-    @Path("/{placa}")
-    public void eliminar(@PathParam("placa") String placa) {
-        this.vs.eliminar(placa);
+    @Path("/buscarTodos")
+    @GET
+    public List<Vehiculo> buscarTodos(){
+        return this.vs.buscarTodos();
     }
+
+    
 }

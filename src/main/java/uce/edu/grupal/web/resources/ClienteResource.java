@@ -18,30 +18,48 @@ public class ClienteResource {
     @Inject
     private ClienteService cs;
 
+    @Path("/guardar")
+    @POST
+    public void guardar(Cliente c){
+        this.cs.guardar(c);
+    }
+
+    @Path("/actualizar/{id}")
+    @PUT
+    public Cliente actualizar(@PathParam("id") Integer id, Cliente c){
+        return this.cs.actualizar(id, c);
+    }
+
+    @Path("/porId/{id}")
     @GET
-    public List<Cliente> obtenerTodos() {
+    public Cliente buscarPorId(@PathParam("id") Integer id){
+        return this.cs.buscarPorId(id);
+    }
+
+    @Path("/eliminar/{id}")
+    @DELETE
+    public void eliminar(@PathParam("id") Integer id){
+        this.cs.eliminar(id);
+    }
+
+    
+    @Path("/eliminarPorCedula/{cedula}")
+    @DELETE
+    public void eliminarPorCedula(@PathParam("cedula") String cedula){
+        this.cs.eliminarPorCedula(cedula);
+    }
+
+    @Path("/buscarTodos")
+    @GET
+    public List<Cliente> buscarTodos(){
         return this.cs.buscarTodos();
     }
 
+    @Path("/porCedula/{cedula}")
     @GET
-    @Path("/{cedula}")
-    public Cliente obtenerPorCedula(@PathParam("cedula") String cedula) {
+    public Cliente buscarPorCedula(@PathParam("cedula") String cedula){
         return this.cs.buscarPorCedula(cedula);
-    }
+    }    
 
-    @POST
-    public void guardar(Cliente cliente) {
-        this.cs.guardar(cliente);
-    }
 
-    @PUT
-    public void actualizar(Cliente cliente) {
-        this.cs.actualizar(cliente);
-    }
-
-    @DELETE
-    @Path("/{cedula}")
-    public void eliminar(@PathParam("cedula") String cedula) {
-        this.cs.eliminar(cedula);
-    }
 }

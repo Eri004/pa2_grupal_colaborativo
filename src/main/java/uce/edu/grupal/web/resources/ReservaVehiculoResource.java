@@ -10,9 +10,10 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import uce.edu.grupal.application.service.ReservaVehiculoService;
+import uce.edu.grupal.domain.model.Pago;
 import uce.edu.grupal.domain.model.ReservaVehiculo;
-import uce.edu.grupal.web.resources.request.ReservaRequestDTO;
 
 @Path("/reservas")
 public class ReservaVehiculoResource {
@@ -20,52 +21,58 @@ public class ReservaVehiculoResource {
     @Inject
     private ReservaVehiculoService rs;
 
-    @GET
-    public List<ReservaVehiculo> obtenerTodos() {
-        return this.rs.buscarTodos();
+    @Path("/guardar")
+    @POST
+    public void guardar(ReservaVehiculo r){
+        this.rs.guardar(r);
     }
 
+    @Path("/actualizar/{id}")
+    @PUT
+    public void actualizar(@PathParam("id") Integer id, ReservaVehiculo r){
+        this.rs.actualizar(id, r);
+
+    }
+
+    @Path("/porId/{id}")
     @GET
-    @Path("/{id}")
-    public ReservaVehiculo obtenerPorId(@PathParam("id") Integer id) {
+    public ReservaVehiculo buscarPorId(@PathParam("id") Integer id){
         return this.rs.buscarPorId(id);
     }
 
-    @GET
-    @Path("/fecha/{fecha}")
-    public List<ReservaVehiculo> buscarPorFecha(@PathParam("fecha") LocalDate fecha) {
-        return this.rs.buscarPorFecha(fecha);
-    }
-
-    @GET
-    @Path("/cliente/{cedula}")
-    public List<ReservaVehiculo> buscarPorCliente(@PathParam("cedula") String cedula) {
-        return this.rs.buscarPorCedulaCliente(cedula);
-    }
-
-    @GET
-    @Path("/vehiculo/{placa}")
-    public List<ReservaVehiculo> buscarPorVehiculo(@PathParam("placa") String placa) {
-        return this.rs.buscarPorPlaca(placa);
-    }
-
-    @POST
-    public void guardar(ReservaRequestDTO dto) {
-        this.rs.guardar(dto);
-    }
-
-    @PUT
-    @Path("/{id}")
-    public void actualizar(
-            @PathParam("id") Integer id,
-            ReservaRequestDTO dto) {
-
-        rs.actualizar(id, dto);
-    }
-
+    @Path("/eliminar/{id}")
     @DELETE
-    @Path("/{codigo}")
-    public void eliminar(@PathParam("codigo") String codigo) {
-        this.rs.eliminar(codigo);
+    public void eliminar(@PathParam("id") Integer id){
+        this.rs.eliminar(id);
     }
+
+    @Path("/nueva")
+    @POST
+    public void nuevaReserva(ReservaVehiculo r) {
+        this.rs.nuevaReserva(r);
+    }
+
+    @Path("/porFecha/{fecha}")
+    @GET
+    public List<ReservaVehiculo> buscarPorFecha(@PathParam("fecha") String fecha) {
+        return this.rs.buscarPorFecha(LocalDate.parse(fecha));
+    }
+
+    @GET
+    @Path("/buscar")
+    public ReservaVehiculo buscarPorPlacaCedulaFecha(@QueryParam("placaVehiculo") String placaVehiculo,
+                                            @QueryParam("cedulaVendedor") String cedulaVendedor,
+                                            @QueryParam("fecha") String fechaStr) {
+
+        LocalDate fecha = LocalDate.parse(fechaStr);
+
+        return this.rs.buscarPorPlacaCedulaFecha(placaVehiculo, cedulaVendedor, fecha);
+    }
+
+    @Path("/buscarTodos")
+    @GET
+    public List<ReservaVehiculo> buscarTodos(){
+        return this.rs.buscarTodos();
+    }
+
 }
