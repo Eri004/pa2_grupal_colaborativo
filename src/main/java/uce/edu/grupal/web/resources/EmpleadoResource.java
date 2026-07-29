@@ -24,9 +24,15 @@ public class EmpleadoResource {
     }
 
     @GET
-    @Path("/{id}")
+    @Path("id/{id}")
     public Empleado obtenerPorId(@PathParam("id") Integer id) {
         return this.es.buscarPorId(id);
+    }
+
+    @GET
+    @Path("/{cedula}")
+    public Empleado obtenerPorCedula(@PathParam("cedula") String cedula) {
+        return this.es.buscarPorCedula(cedula);
     }
 
     @POST

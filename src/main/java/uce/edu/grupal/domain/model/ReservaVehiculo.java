@@ -3,6 +3,7 @@ package uce.edu.grupal.domain.model;
 import java.time.LocalDate;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -43,6 +45,11 @@ public class ReservaVehiculo extends PanacheEntityBase {
 
     @Column(name = "rese_codigo")
     private String codigoReserva;
+
+    @OneToOne(mappedBy = "reserva",
+          cascade = CascadeType.ALL,
+          orphanRemoval = true)
+private Pago pago;
 
     public String getCodigoReserva() {
         return codigoReserva;

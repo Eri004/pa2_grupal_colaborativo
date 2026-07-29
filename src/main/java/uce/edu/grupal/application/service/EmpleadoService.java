@@ -35,7 +35,22 @@ public class EmpleadoService {
 
     public void eliminar(String cedula) {
         Empleado e = this.er.buscarPorCedula(cedula);
+
+        if (e == null) {
+            throw new RuntimeException("Empleado no encontrado");
+        }
+
         e.setEstado("INACTIVO");
+    }
+
+    public void eliminarFisico(String cedula) {
+        Empleado e = this.er.buscarPorCedula(cedula);
+
+        if (e == null) {
+            throw new RuntimeException("Empleado no encontrado");
+        }
+
+        e.delete();
     }
 
     public void actualizar(Empleado empleado) {

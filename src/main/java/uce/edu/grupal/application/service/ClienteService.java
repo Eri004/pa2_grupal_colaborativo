@@ -35,8 +35,17 @@ public class ClienteService {
     public void eliminar(String cedula) {
         Cliente c = this.cr.buscarPorCedula(cedula);
 
-        c.setEstado("INACTIVO");
+        if (c != null) {
+            c.setEstado("INACTIVO");
+        }
+    }
 
+    public void eliminarFisico(String cedula) {
+        Cliente c = this.cr.buscarPorCedula(cedula);
+
+        if (c != null) {
+            c.delete();
+        }
     }
 
     public void actualizar(Cliente cliente) {

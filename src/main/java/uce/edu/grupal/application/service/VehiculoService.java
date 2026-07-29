@@ -45,10 +45,21 @@ public class VehiculoService {
 
     public void eliminar(String placa) {
         Vehiculo v = this.vr.buscarPorPlaca(placa);
+
         if (v == null) {
             throw new RuntimeException("Vehículo no encontrado");
         }
-        v.setEstado("INACTIVO");
 
+        v.setEstado("INACTIVO");
+    }
+
+    public void eliminarFisico(String placa) {
+        Vehiculo v = this.vr.buscarPorPlaca(placa);
+
+        if (v == null) {
+            throw new RuntimeException("Vehículo no encontrado");
+        }
+
+        v.delete();
     }
 }

@@ -136,9 +136,9 @@ public class ReservaVehiculoService {
 
     }
 
-    public void actualizar(Integer id, ReservaRequestDTO dto) {
+    public void actualizar(String codigo, ReservaRequestDTO dto) {
 
-        ReservaVehiculo reserva = this.rr.findById(id);
+        ReservaVehiculo reserva = this.rr.buscarPorCodigo(codigo);
 
         Cliente cliente = cs.buscarPorCedula(dto.getCedulaCliente());
 

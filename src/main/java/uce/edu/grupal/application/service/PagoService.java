@@ -76,6 +76,19 @@ public class PagoService {
 
     }
 
+    public void eliminarFisico(String numFactura) {
+        Pago pago= this.pr.buscarPorFactura(numFactura);
+
+         if (pago == null) {
+            throw new RuntimeException("No existe el pago con codigo: " + numFactura);
+        }
+        
+        pago.delete();
+        System.out.println("ELIMINANDO PAGO: " + pago.getNumeroFactura());
+
+
+    }
+
     public void actualizar(String factura, PagoRequestDTO dto) {
 
         Pago pago = this.pr.buscarPorFactura(factura);
@@ -91,6 +104,10 @@ public class PagoService {
         long numero = System.currentTimeMillis();
 
         return "FAC-" + numero;
+    }
+
+    public Pago buscarPago(String codigo){
+        return this.pr.buscarPorFactura(codigo);
     }
 
 }

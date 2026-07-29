@@ -25,9 +25,9 @@ public class PagoResource {
     }
 
     @GET
-    @Path("/{id}")
-    public Pago obtenerPorId(@PathParam("id") Integer id) {
-        return this.ps.buscarPorId(id);
+    @Path("/{codigo}")
+    public Pago obtenerPorCodigo(@PathParam("codigo") String codigo) {
+        return this.ps.buscarPago(codigo);
     }
 
     @GET

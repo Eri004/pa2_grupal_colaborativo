@@ -55,12 +55,12 @@ public class ReservaVehiculoResource {
     }
 
     @PUT
-    @Path("/{id}")
+    @Path("/{codigo}")
     public void actualizar(
-            @PathParam("id") Integer id,
+            @PathParam("codigo") String codigo,
             ReservaRequestDTO dto) {
 
-        rs.actualizar(id, dto);
+        rs.actualizar(codigo, dto);
     }
 
     @DELETE

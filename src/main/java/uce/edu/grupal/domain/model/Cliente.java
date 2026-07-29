@@ -1,11 +1,15 @@
 package uce.edu.grupal.domain.model;
 
+import java.util.List;
+
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -36,6 +40,10 @@ public class Cliente extends PanacheEntityBase {
 
     @Column(name = "clie_estado")
     private String estado;
+
+    @OneToMany(mappedBy = "cliente",
+            cascade = CascadeType.REMOVE)
+    private List<ReservaVehiculo> reservas;
 
     public String getCedula() {
         return cedula;
