@@ -14,3 +14,11 @@ Estado: PENDIENTE, Fecha: 2026-08-15
 uce.edu.grupal.domain.model.ReservaVehiculo@36125c59
 =================================================
 
+=================================================
+Fecha Auditoría: 2026-07-30T13:10:47.012429400
+Método invocado: nuevaReserva
+Datos de la reserva:
+Estado: PENDIENTE, Fecha: 2026-08-15
+uce.edu.grupal.domain.model.ReservaVehiculo@2ae3056a
+=================================================
+

@@ -34,6 +34,9 @@ public class ReservaVehiculoService {
     private ClienteService cs;
 
     public void guardar(ReservaVehiculo c) {
+        if (c.getPago() != null && c.getPago().getId() != null) {
+            c.setPago(this.ps.buscarPorId(c.getPago().getId()));
+        }
         this.rri.persist(c);
     }
 
