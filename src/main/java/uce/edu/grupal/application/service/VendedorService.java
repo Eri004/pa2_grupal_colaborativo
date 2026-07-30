@@ -38,33 +38,22 @@ public class VendedorService {
     }
 
     public void actualizar(Integer id, Vendedor c) {
-
-    // Este metodo exije enviar todo el Json
-        
-        //Validaciones
-            // Validar que el objeto Vendedor no sea nulo
         if (c == null) {
             throw new IllegalArgumentException("El vendedor no puede ser nulo");
         }
         Vendedor nuevo = this.er.findById(id);
-            // Validar que el objeto Vendedor con el id proporcionado exista
         if (nuevo == null) {
             throw new IllegalArgumentException("Vendedor con id " + id + " no encontrado");
         }
-
-            // Validar que la cédula del objeto Vendedor no sea nula o vacía
-        if (!nuevo.getCedula().equals(c.getCedula())) {
+        if (c.getCedula() != null && !c.getCedula().equals(nuevo.getCedula())) {
             Vendedor existente = this.er.find("cedula", c.getCedula()).firstResult();
             if (existente != null) {
                 throw new IllegalArgumentException("Ya existe un vendedor con la cédula " + c.getCedula());
             }
+            nuevo.setCedula(c.getCedula());
         }
-        nuevo.setCedula(c.getCedula());
-        nuevo.setNombres(c.getNombres());
-        nuevo.setApellidos(c.getApellidos());
-        
-
-        // Actualizar el objeto Vendedor en la base de datos
+        if (c.getNombres() != null)    nuevo.setNombres(c.getNombres());
+        if (c.getApellidos() != null) nuevo.setApellidos(c.getApellidos());
         this.er.getEntityManager().merge(nuevo);
     }
 
