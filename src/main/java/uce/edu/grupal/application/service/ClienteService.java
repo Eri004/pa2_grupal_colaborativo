@@ -19,15 +19,32 @@ public class ClienteService {
         this.cr.persist(cliente);
     }
 
-    public Cliente actualizar(Integer id, Cliente cliente) {
-        Cliente c = this.cr.buscarPorCedula(cliente.getCedula());
-        c.setCedula(cliente.getCedula());
-        c.setNombres(cliente.getNombres());
-        c.setApellidos(cliente.getApellidos());
-        c.setTelefono(cliente.getTelefono());
-        c.setCorreo(cliente.getCorreo());
-        return c;
-
+    public void actualizar(Integer id, Cliente cliente) {
+        if (cliente == null) {
+            throw new IllegalArgumentException("El cliente no puede ser nulo");
+        }
+        Cliente nuevo = this.cr.findById(id);
+        if (nuevo == null) {
+            throw new IllegalArgumentException("Cliente con id " + id + " no encontrado");
+        }
+        if (cliente.getCedula() != null && !cliente.getCedula().equals(nuevo.getCedula())) {
+            Cliente existe = this.cr.find("cedula", cliente.getCedula()).firstResult();
+            if (existe != null) {
+                throw new IllegalArgumentException("Ya existe un cliente con la cédula " + cliente.getCedula());
+            }
+            nuevo.setCedula(cliente.getCedula());
+        }
+        if (cliente.getCorreo() != null && !cliente.getCorreo().equals(nuevo.getCorreo())) {
+            Cliente existe = this.cr.find("correo", cliente.getCorreo()).firstResult();
+            if (existe != null) {
+                throw new IllegalArgumentException("Ya existe un cliente con el correo " + cliente.getCorreo());
+            }
+            nuevo.setCorreo(cliente.getCorreo());
+        }
+        if (cliente.getNombres() != null)   nuevo.setNombres(cliente.getNombres());
+        if (cliente.getApellidos() != null) nuevo.setApellidos(cliente.getApellidos());
+        if (cliente.getTelefono() != null)  nuevo.setTelefono(cliente.getTelefono());
+        this.cr.getEntityManager().merge(nuevo);
     }
 
     public Cliente buscarPorId(Integer id) {

@@ -26,8 +26,8 @@ public class ClienteResource {
 
     @Path("/actualizar/{id}")
     @PUT
-    public Cliente actualizar(@PathParam("id") Integer id, Cliente c){
-        return this.cs.actualizar(id, c);
+    public void actualizar(@PathParam("id") Integer id, Cliente c){
+        this.cs.actualizar(id, c);
     }
 
     @Path("/porId/{id}")

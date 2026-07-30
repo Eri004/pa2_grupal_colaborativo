@@ -20,17 +20,37 @@ public class VehiculoService {
     }
 
     public void actualizarPorPlaca(String placa, Vehiculo vehiculo) {
-        Vehiculo v = this.vr.buscarPorPlaca(vehiculo.getPlaca());
-
-        v.setPlaca(vehiculo.getPlaca());
-        v.setMarca(vehiculo.getMarca());
-        v.setModelo(vehiculo.getModelo());
+        if (placa == null || placa.isBlank()) {
+            throw new IllegalArgumentException("La placa no puede ser nula o vacia");
+        }
+        if (vehiculo == null) {
+            throw new IllegalArgumentException("El vehiculo no puede ser nulo");
+        }
+        Vehiculo existente = this.vr.buscarPorPlaca(placa);
+        if (existente == null) {
+            throw new IllegalArgumentException("Vehiculo con placa " + placa + " no encontrado");
+        }
+        this.actualizar(existente.getId(), vehiculo);
     }
 
-    public void actualizar(Integer id, Vehiculo c){
+    public void actualizar(Integer id, Vehiculo c) {
+        if (c == null) {
+            throw new IllegalArgumentException("El vehiculo no puede ser nulo");
+        }
         Vehiculo nuevo = this.vr.findById(id);
-        nuevo.setPlaca(c.getPlaca());
-
+        if (nuevo == null) {
+            throw new IllegalArgumentException("Vehiculo con id " + id + " no encontrado");
+        }
+        if (c.getPlaca() != null && !c.getPlaca().equals(nuevo.getPlaca())) {
+            Vehiculo existe = this.vr.find("placa", c.getPlaca()).firstResult();
+            if (existe != null) {
+                throw new IllegalArgumentException("Ya existe un vehiculo con la placa " + c.getPlaca());
+            }
+            nuevo.setPlaca(c.getPlaca());
+        }
+        if (c.getMarca() != null)  nuevo.setMarca(c.getMarca());
+        if (c.getModelo() != null) nuevo.setModelo(c.getModelo());
+        this.vr.getEntityManager().merge(nuevo);
     }
 
     public Vehiculo buscarPorId(Integer id) {

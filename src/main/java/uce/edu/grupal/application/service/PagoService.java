@@ -20,10 +20,16 @@ public class PagoService {
     }
 
     public void actualizar(Integer id, Pago p) {
+        if (p == null) {
+            throw new IllegalArgumentException("El pago no puede ser nulo");
+        }
         Pago nuevo = this.pri.findById(id);
-        nuevo.setMonto(p.getMonto());
-        nuevo.setMetodoPago(p.getMetodoPago());
-
+        if (nuevo == null) {
+            throw new IllegalArgumentException("Pago con id " + id + " no encontrado");
+        }
+        if (p.getMonto() != null)      nuevo.setMonto(p.getMonto());
+        if (p.getMetodoPago() != null) nuevo.setMetodoPago(p.getMetodoPago());
+        this.pri.getEntityManager().merge(nuevo);
     }
 
     public List<Pago> buscarTodos() {
