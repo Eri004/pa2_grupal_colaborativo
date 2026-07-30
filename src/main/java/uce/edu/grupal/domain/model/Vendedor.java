@@ -62,7 +62,8 @@ public class Vendedor extends PanacheEntityBase {
 
     @Override
     public String toString() {
-        return "Vendedor [id=" + id + ", cedula=" + cedula + ", nombres=" + nombres + ", apellidos=" + apellidos + "]";
+        return "Vendedor: \n\tCedula:" + cedula + "\n\tNombres:" + nombres
+                + "\n\tApellidos:" + apellidos  + "\n---------";
     }
 
     

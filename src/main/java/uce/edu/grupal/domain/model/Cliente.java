@@ -84,9 +84,9 @@ public class Cliente extends PanacheEntityBase {
 
     @Override
     public String toString() {
-        return "Cliente [cedula=" + cedula + ", nombres=" + nombres
-                + ", apellidos=" + apellidos + ", telefono=" + telefono
-                + ", correo=" + correo + "]";
+        return "Cliente: \n\tCedula:" + cedula + "\n\tNombres:" + nombres
+                + "\n\tApellidos:" + apellidos + "\n\tTelefono:" + telefono
+                + "\n\tCorreo:" + correo + "\n---------";
     }
 
 }

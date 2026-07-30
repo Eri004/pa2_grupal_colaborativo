@@ -22,3 +22,62 @@ Estado: PENDIENTE, Fecha: 2026-08-15
 uce.edu.grupal.domain.model.ReservaVehiculo@2ae3056a
 =================================================
 
+=================================================
+Fecha Auditoría: 2026-07-30T15:51:00.685079800
+Método invocado: nuevaReserva
+Datos de la reserva:
+Estado: Completado, Fecha: 2026-07-28
+Reserva Nº: null
+Cliente: 
+	Cedula:1234567890
+	Nombres:Kevin
+	Apellidos:Chicaiza
+	Telefono:099999999
+	Correo:k@gmail.com
+---------
+Vehiculo: 
+	Placa:ABC123
+	Marca:Toyota
+	Modelo:Corolla
+---------
+Vendedor: 
+	Cedula:1723455678
+	Nombres:Juley
+	Apellidos:Soto
+---------
+Pago: 
+	Monto:200.0
+	Metodo:Efectivo
+	id:null
+---------
+=================================================
+
+=================================================
+Fecha Auditoría: 2026-07-30T15:52:24.051898600
+Método invocado: nuevaReserva
+Datos de la reserva:
+Estado: Completado, Fecha: 2026-07-28
+Reserva: 
+Cliente: 
+	Cedula:1234567890
+	Nombres:Kevin
+	Apellidos:Chicaiza
+	Telefono:099999999
+	Correo:k@gmail.com
+---------
+Vehiculo: 
+	Placa:ABC123
+	Marca:Toyota
+	Modelo:Corolla
+---------
+Vendedor: 
+	Cedula:1723455678
+	Nombres:Juley
+	Apellidos:Soto
+---------
+Pago: 
+	Monto:200.0
+	Metodo:Efectivo
+---------
+=================================================
+

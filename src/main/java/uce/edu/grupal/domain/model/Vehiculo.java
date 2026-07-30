@@ -63,7 +63,7 @@ public class Vehiculo extends PanacheEntityBase {
 
     @Override
     public String toString() {
-        return "Vehiculo [placa=" + placa + ", marca=" + marca
-                + ", modelo=" + modelo + "]";
+        return "Vehiculo: \n\tPlaca:" + placa + "\n\tMarca:" + marca
+                + "\n\tModelo:" + modelo+ "\n---------";
     }
 }

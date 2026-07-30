@@ -103,4 +103,10 @@ public class ReservaVehiculo extends PanacheEntityBase {
         this.pago = pago;
     }
 
+    @Override
+    public String toString() {
+        return "Reserva: " + "\n" + cliente + "\n" + vehiculo
+                + "\n" + vendedor + "\n" + pago;
+    }
+
 }

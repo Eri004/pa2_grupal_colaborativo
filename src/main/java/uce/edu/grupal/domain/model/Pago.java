@@ -55,5 +55,9 @@ public class Pago extends PanacheEntityBase {
     }
 
 
+    @Override
+    public String toString() {
+        return "Pago: \n\tMonto:" + monto + "\n\tMetodo:" + metodoPago + "\n---------";
+    }
 
 }
