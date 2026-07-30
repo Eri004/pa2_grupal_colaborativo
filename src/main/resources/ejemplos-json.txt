@@ -1,0 +1,168 @@
+================================================================================
+EJEMPLOS DE JSON PARA CREAR ENTIDADES
+================================================================================
+Base URL: http://localhost:8080
+Content-Type: application/json
+Notas generales:
+  - El campo "id" NUNCA se envia: lo genera la BD (secuencia).
+  - Los campos marcados con [UNIQUE] ya existen en la BD; no se pueden repetir.
+  - Los campos marcados con [NOT NULL] son obligatorios; si faltan -> error 400.
+================================================================================
+
+
+================================================================================
+1. CLIENTE
+================================================================================
+Endpoint:  POST /clientes/guardar
+Entidad:   uce.edu.grupal.domain.model.Cliente
+Tabla BD:  cliente
+
+Campos del modelo:
+  - id        : Integer   [AUTO]   Generado por seq_cliente
+  - cedula    : String    [UNIQUE] [NOT NULL] Identificador unico del cliente
+  - nombres   : String
+  - apellidos : String
+  - telefono  : String
+  - correo    : String    [UNIQUE] [NOT NULL] No se puede repetir entre clientes
+
+JSON:
+{
+  "cedula": "1712345678",
+  "nombres": "Juan",
+  "apellidos": "Perez",
+  "telefono": "0991234567",
+  "correo": "juan.perez@mail.com"
+}
+
+
+================================================================================
+2. VENDEDOR
+================================================================================
+Endpoint:  POST /vendedor/guardar
+Entidad:   uce.edu.grupal.domain.model.Vendedor
+Tabla BD:  vendedor
+
+Campos del modelo:
+  - id        : Integer   [AUTO]   Generado por seq_vendedor
+  - cedula    : String    [UNIQUE]            Identificador unico del vendedor
+  - nombres   : String
+  - apellidos : String
+
+JSON:
+{
+  "cedula": "0912345678",
+  "nombres": "Maria",
+  "apellidos": "Lopez"
+}
+
+
+================================================================================
+3. VEHICULO
+================================================================================
+Endpoint:  POST /vehiculos/guardar
+Entidad:   uce.edu.grupal.domain.model.Vehiculo
+Tabla BD:  vehiculo
+
+Campos del modelo:
+  - id     : Integer   [AUTO]   Generado por seq_vehiculo
+  - placa  : String    [UNIQUE] [NOT NULL] Placa unica del vehiculo
+  - marca  : String
+  - modelo : String
+
+JSON:
+{
+  "placa": "ABC-1234",
+  "marca": "Toyota",
+  "modelo": "Corolla 2024"
+}
+
+
+================================================================================
+4. PAGO
+================================================================================
+Endpoint:  POST /pago/guardar
+Entidad:   uce.edu.grupal.domain.model.Pago
+Tabla BD:  pago
+
+Campos del modelo:
+  - id         : Integer     [AUTO]   Generado por seq_pago
+  - monto      : BigDecimal            Monto del pago (numero decimal)
+  - metodoPago : String                Ej: "EFECTIVO", "TARJETA_CREDITO", "TRANSFERENCIA"
+
+JSON:
+{
+  "monto": 1500.50,
+  "metodoPago": "TARJETA_CREDITO"
+}
+
+
+================================================================================
+5. RESERVA DE VEHICULO
+================================================================================
+Entidad:   uce.edu.grupal.domain.model.ReservaVehiculo
+Tabla BD:  reserva_vehiculo
+
+Campos del modelo:
+  - id       : Integer   [AUTO]    Generado por seq_reserva
+  - fecha    : LocalDate             Fecha de la reserva (formato "YYYY-MM-DD")
+  - estado   : String                Ej: "PENDIENTE", "CONFIRMADA", "CANCELADA"
+  - cliente  : Cliente   [FK]        Relacion con la tabla cliente
+  - vehiculo : Vehiculo  [FK]        Relacion con la tabla vehiculo
+  - vendedor : Vendedor  [FK]        Relacion con la tabla vendedor
+  - pago     : Pago      [FK, CASCADE=ALL]  Se persiste junto con la reserva
+
+Endpoints disponibles:
+  - POST /reservas/guardar  -> Persistencia directa (necesita entidades con id)
+  - POST /reservas/nueva    -> Logica de negocio: busca por cedula/placa y resuelve
+
+
+--------------------------------------------------------------------------------
+5A. VARIANTE: POST /reservas/guardar (persistencia directa)
+--------------------------------------------------------------------------------
+En esta variante se envian las FK como objetos con su "id". No resuelve nada,
+simplemente persiste lo que llega. Si una FK no existe, fallara al insertar.
+
+JSON:
+{
+  "fecha": "2026-08-15",
+  "estado": "PENDIENTE",
+  "cliente":  { "id": 1 },
+  "vehiculo": { "id": 1 },
+  "vendedor": { "id": 1 },
+  "pago":     { "id": 1 }
+}
+
+
+--------------------------------------------------------------------------------
+5B. VARIANTE: POST /reservas/nueva (logica de negocio, RECOMENDADA)
+--------------------------------------------------------------------------------
+En esta variante:
+  - El cliente se busca por [UNIQUE] cedula; si no existe, se crea automaticamente.
+  - El vehiculo se busca por [UNIQUE] placa; debe existir previamente.
+  - El vendedor se busca por [UNIQUE] cedula; debe existir previamente.
+  - El pago se persiste con la reserva (cascade ALL).
+
+JSON:
+{
+  "fecha": "2026-08-15",
+  "estado": "PENDIENTE",
+  "cliente":  { "cedula": "1712345678" },
+  "vehiculo": { "placa":  "ABC-1234" },
+  "vendedor": { "cedula": "0912345678" },
+  "pago": {
+    "monto": 1500.50,
+    "metodoPago": "TARJETA_CREDITO"
+  }
+}
+
+
+================================================================================
+RESUMEN DE UNICIDAD (constraints UNIQUE en la BD)
+================================================================================
+- cliente.cedula   [UNIQUE]   -> Dos clientes no pueden tener la misma cedula
+- cliente.correo   [UNIQUE]   -> Dos clientes no pueden tener el mismo correo
+- vendedor.cedula  [UNIQUE]   -> Dos vendedores no pueden tener la misma cedula
+- vehiculo.placa   [UNIQUE]   -> Dos vehiculos no pueden tener la misma placa
+
+Si intentas insertar un duplicado, Postgres lanzara error y la operacion fallara.
+================================================================================

@@ -58,11 +58,7 @@ public class ReservaVehiculoService {
             return clienteParaReserva;
         });
 
-        CompletableFuture<Void> completablePago = CompletableFuture.runAsync(() -> {
-            this.ps.guardar(r.getPago());
-        });
-
-        CompletableFuture.allOf(completableCliente, completablePago).join();
+        completableCliente.join();
 
         ReservaVehiculo nuevo = new ReservaVehiculo();
         nuevo.setFecha(r.getFecha());
