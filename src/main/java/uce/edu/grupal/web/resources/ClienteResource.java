@@ -24,10 +24,10 @@ public class ClienteResource {
         this.cs.guardar(c);
     }
 
-    @Path("/actualizar/{id}")
+    @Path("/actualizar")
     @PUT
-    public void actualizar(@PathParam("id") Integer id, Cliente c){
-        this.cs.actualizar(id, c);
+    public void actualizar(Cliente c){
+        this.cs.actualizar(c);
     }
 
     @Path("/porId/{id}")

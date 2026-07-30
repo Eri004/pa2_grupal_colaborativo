@@ -23,13 +23,13 @@ public class ClienteService {
         this.cr.persist(cliente);
     }
 
-    public void actualizar(Integer id, Cliente cliente) {
+    public void actualizar(Cliente cliente) {
         if (cliente == null) {
             throw new IllegalArgumentException("El cliente no puede ser nulo");
         }
-        Cliente nuevo = this.cr.findById(id);
+        Cliente nuevo = this.cr.buscarPorCedula(cliente.getCedula());
         if (nuevo == null) {
-            throw new IllegalArgumentException("Cliente con id " + id + " no encontrado");
+            throw new IllegalArgumentException("Cliente con cedula " + cliente.getCedula() + " no encontrado");
         }
         if (cliente.getCedula() != null && !cliente.getCedula().equals(nuevo.getCedula())) {
             Cliente existe = this.cr.find("cedula", cliente.getCedula()).firstResult();
