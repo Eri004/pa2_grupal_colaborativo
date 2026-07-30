@@ -2,7 +2,6 @@ package uce.edu.grupal.application.service;
 
 import java.util.List;
 
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -40,9 +39,9 @@ public class ClienteService {
         this.cr.delete(cli);
     }
 
-    public Cliente eliminarPorCedula(String cedula) {
+    public void eliminarPorCedula(String cedula) {
         Cliente c = this.cr.buscarPorCedula(cedula);
-        return c;
+        this.cr.delete(c);
     }
 
     public List<Cliente> buscarTodos() {
