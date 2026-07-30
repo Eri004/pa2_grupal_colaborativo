@@ -28,9 +28,6 @@ public class Vendedor extends PanacheEntityBase {
     @Column(name = "vend_apellidos")
     private String apellidos;
 
-    @Column(name = "vend_cargo")
-    private String cargo;
-
     public Integer getId() {
         return id;
     }
@@ -55,27 +52,18 @@ public class Vendedor extends PanacheEntityBase {
         this.apellidos = apellidos;
     }
 
-    public String getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
-    }
-
-        public String getCedula() {
+    public String getCedula() {
         return cedula;
     }
 
     public void setCedula(String cedula) {
         this.cedula = cedula;
     }
-    
+
     @Override
     public String toString() {
-        return "Empleado [id=" + id + ", nombres=" + nombres
-                + ", apellidos=" + apellidos + ", cargo=" + cargo
-                + "]";
+        return "Vendedor [id=" + id + ", cedula=" + cedula + ", nombres=" + nombres + ", apellidos=" + apellidos + "]";
     }
 
+    
 }

@@ -2,13 +2,9 @@ package uce.edu.grupal.application.service;
 
 import java.util.List;
 
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import uce.edu.grupal.domain.model.ReservaVehiculo;
 import uce.edu.grupal.domain.model.Vehiculo;
 import uce.edu.grupal.infrastructure.repository.VehiculoRepositoryImpl;
 
@@ -21,14 +17,6 @@ public class VehiculoService {
 
     public void guardar(Vehiculo vehiculo) {
         this.vr.persist(vehiculo);
-    }
-
-    public Vehiculo buscarPorId(Integer id) {
-        return this.vr.findById(id);
-    }
-
-    public List<Vehiculo> buscarTodos() {
-        return this.vr.listAll();
     }
 
     public void actualizarPorPlaca(String placa, Vehiculo vehiculo) {
@@ -45,14 +33,12 @@ public class VehiculoService {
 
     }
 
-    public void eliminarPorPlaca(String placa) {
-        Vehiculo v = this.vr.buscarPorPlaca(placa);
-        this.vr.delete(v);
+    public Vehiculo buscarPorId(Integer id) {
+        return this.vr.findById(id);
     }
 
-    public void eliminar(Integer id){
-        Vehiculo vehiculo = this.buscarPorId(id);
-        this.vr.delete(vehiculo);
+    public List<Vehiculo> buscarTodos() {
+        return this.vr.listAll();
     }
 
     public Vehiculo buscarPorPlaca(String placa){
@@ -61,11 +47,14 @@ public class VehiculoService {
         
     }
 
-    public Uni<Vehiculo> buscarPorPlacaPromesa(String placa) {
-
-        return Uni.createFrom().item(this.vr.buscarPorPlaca(placa));
-
+    public void eliminar(Integer id){
+        Vehiculo vehiculo = this.buscarPorId(id);
+        this.vr.delete(vehiculo);
     }
-
+    
+    public void eliminarPorPlaca(String placa) {
+        Vehiculo v = this.vr.buscarPorPlaca(placa);
+        this.vr.delete(v);
+    }
 
 }

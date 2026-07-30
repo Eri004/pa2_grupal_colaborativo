@@ -3,24 +3,19 @@ package uce.edu.grupal.application.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import uce.edu.grupal.application.interceptor.Auditoria;
 import uce.edu.grupal.domain.model.Cliente;
-import uce.edu.grupal.domain.model.Pago;
-import uce.edu.grupal.domain.model.Vendedor;
 import uce.edu.grupal.domain.model.ReservaVehiculo;
-import uce.edu.grupal.domain.model.Vehiculo;
 import uce.edu.grupal.infrastructure.repository.ReservaVehiculoRepositoryImpl;
 
 @ApplicationScoped
 @Transactional
 public class ReservaVehiculoService {
-@Inject
+    @Inject
     private ReservaVehiculoRepositoryImpl rri;
 
     @Inject
@@ -42,8 +37,22 @@ public class ReservaVehiculoService {
     @Auditoria
     public void nuevaReserva(ReservaVehiculo r) {
 
-        CompletableFuture<Void> completableCliente = CompletableFuture.runAsync(() -> {
-            this.cs.guardar(r.getCliente());
+        CompletableFuture<Cliente> completableCliente = CompletableFuture.supplyAsync(() -> {
+            Cliente clienteParaReserva = null;
+            if (r.getCliente() != null) {
+
+                Cliente clienteExistente = this.cs.buscarPorCedula(r.getCliente().getCedula());
+
+                if (clienteExistente != null) {
+
+                    clienteParaReserva = clienteExistente;
+                } else {
+
+                    this.cs.guardar(r.getCliente());
+                    clienteParaReserva = r.getCliente();
+                }
+            }
+            return clienteParaReserva;
         });
 
         CompletableFuture<Void> completablePago = CompletableFuture.runAsync(() -> {
@@ -56,17 +65,16 @@ public class ReservaVehiculoService {
         nuevo.setFecha(r.getFecha());
         nuevo.setEstado(r.getEstado());
 
-        nuevo.setCliente(r.getCliente());
+        nuevo.setCliente(completableCliente.join());
         nuevo.setPago(r.getPago());
-        
-        nuevo.setVehiculo(this.vs.buscarPorId(r.getVehiculo().getId()));
-        nuevo.setVendedor(this.vends.buscarPorId(r.getVendedor().getId()));
+
+        nuevo.setVehiculo(this.vs.buscarPorPlaca(r.getVehiculo().getPlaca()));
+        nuevo.setVendedor(this.vends.buscarPorCedula(r.getVendedor().getCedula()));
 
         this.rri.persist(nuevo);
     }
 
     public void actualizar(Integer id, ReservaVehiculo r) {
-
         ReservaVehiculo nuevo = this.rri.findById(id);
 
         nuevo.setFecha(r.getFecha());
@@ -82,31 +90,31 @@ public class ReservaVehiculoService {
         return this.rri.findById(id);
     }
 
-    public void eliminar(Integer id) {
-        this.rri.deleteById(id);
-
+    public List<ReservaVehiculo> buscarTodos() {
+        return this.rri.findAll().list();
     }
 
+    public void eliminar(Integer id) {
+        this.rri.deleteById(id);
+    }
+
+    public List<ReservaVehiculo> buscarPorPlaca(String placaVehiculo) {
+        return this.rri.list("vehiculo.placa", placaVehiculo);
+    }
+
+    public List<ReservaVehiculo> buscarPorCedulaVendedor(String cedulaVendedor) {
+    if (cedulaVendedor == null || cedulaVendedor.isBlank()) {
+        return List.of();
+    }
+    return this.rri.list("vendedor.cedula", cedulaVendedor);
+}
+
     public List<ReservaVehiculo> buscarPorFecha(LocalDate fecha) {
-
-        return this.rri.listAll()
-                .parallelStream()
-                .filter(r -> r.getFecha().equals(fecha))
-                .collect(Collectors.toList());
-
+        return this.rri.list("fecha", fecha);
     }
 
     public ReservaVehiculo buscarPorPlacaCedulaFecha(String placaVehiculo, String cedulaVendedor, LocalDate fecha) {
-        return this.rri.listAll()
-                .parallelStream()
-                .filter(r -> r.getVehiculo() != null && r.getVehiculo().getPlaca().equals(placaVehiculo))
-                .filter(r -> r.getVendedor() != null && r.getVendedor().getCedula().equals(cedulaVendedor))
-                .filter(r -> r.getFecha().equals(fecha))
-                .findFirst()
-                .orElse(null);
+        return this.rri.buscarPorPlacaCedulaFecha(placaVehiculo, cedulaVendedor, fecha);
     }
 
-    public List<ReservaVehiculo> buscarTodos(){
-        return this.rri.findAll().list();
-    }
 }

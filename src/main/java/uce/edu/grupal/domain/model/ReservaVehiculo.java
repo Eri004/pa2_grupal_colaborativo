@@ -30,7 +30,7 @@ public class ReservaVehiculo extends PanacheEntityBase {
     private Cliente cliente;
 
     @ManyToOne
-    @JoinColumn(name = "vehi_placa")
+    @JoinColumn(name = "vehi_id")
     private Vehiculo vehiculo;
 
     @ManyToOne

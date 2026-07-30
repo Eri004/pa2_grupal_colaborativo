@@ -2,13 +2,9 @@ package uce.edu.grupal.application.service;
 
 import java.util.List;
 
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import uce.edu.grupal.domain.model.ReservaVehiculo;
 import uce.edu.grupal.domain.model.Vendedor;
 import uce.edu.grupal.infrastructure.repository.VendedorRepositoryImpl;
 
@@ -23,8 +19,17 @@ public class VendedorService {
         this.er.persist(empleado);
     }
 
+    public void actualizar(Integer id, Vendedor c){
+        Vendedor nuevo = this.er.findById(id);
+        nuevo.setCedula(c.getCedula());
+    }
+
     public Vendedor buscarPorId(Integer id) {
         return this.er.findById(id);
+    }
+
+    public Vendedor buscarPorCedula(String cedula) {
+        return this.er.buscarPorCedula(cedula);
     }
 
     public List<Vendedor> buscarTodos() {
@@ -41,13 +46,6 @@ public class VendedorService {
         this.er.delete(vendedor);
     }
 
-    public void actualizar(Integer id, Vendedor c){
-        Vendedor nuevo = this.er.findById(id);
-        nuevo.setCedula(c.getCedula());
-    }
 
-    public Vendedor buscarPorCedula(String cedula) {
-        return this.er.buscarPorCedula(cedula);
-    }
 
 }

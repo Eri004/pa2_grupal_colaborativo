@@ -2,7 +2,6 @@ package uce.edu.grupal.application.service;
 
 import java.util.List;
 
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -35,22 +34,23 @@ public class ClienteService {
         return this.cr.findById(id);
     }
 
+    public Cliente buscarPorCedula(String cedula) {
+        return this.cr.buscarPorCedula(cedula);
+    }
+
     public void eliminar(Integer id){
         Cliente cli = this.buscarPorId(id);
         this.cr.delete(cli);
     }
 
-    public Cliente eliminarPorCedula(String cedula) {
+    public void eliminarPorCedula(String cedula) {
         Cliente c = this.cr.buscarPorCedula(cedula);
-        return c;
+        this.cr.delete(c);
     }
 
     public List<Cliente> buscarTodos() {
         return this.cr.listAll();
     }
 
-    public Cliente buscarPorCedula(String cedula) {
-        return this.cr.buscarPorCedula(cedula);
-    }
 
 }

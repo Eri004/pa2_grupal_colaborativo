@@ -2,7 +2,6 @@ package uce.edu.grupal.web.resources;
 
 import java.util.List;
 
-import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -11,7 +10,6 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import uce.edu.grupal.application.service.VendedorService;
-import uce.edu.grupal.domain.model.ReservaVehiculo;
 import uce.edu.grupal.domain.model.Vendedor;
 
 @Path("/vendedor")

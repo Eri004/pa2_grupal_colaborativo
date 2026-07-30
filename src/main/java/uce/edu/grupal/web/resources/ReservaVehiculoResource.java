@@ -10,9 +10,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.QueryParam;
 import uce.edu.grupal.application.service.ReservaVehiculoService;
-import uce.edu.grupal.domain.model.Pago;
 import uce.edu.grupal.domain.model.ReservaVehiculo;
 
 @Path("/reservas")
@@ -59,10 +57,10 @@ public class ReservaVehiculoResource {
     }
 
     @GET
-    @Path("/buscar")
-    public ReservaVehiculo buscarPorPlacaCedulaFecha(@QueryParam("placaVehiculo") String placaVehiculo,
-                                            @QueryParam("cedulaVendedor") String cedulaVendedor,
-                                            @QueryParam("fecha") String fechaStr) {
+    @Path("/buscar/{placaVehiculo}/{cedulaVendedor}/{fecha}")
+    public ReservaVehiculo buscarPorPlacaCedulaFecha(@PathParam("placaVehiculo") String placaVehiculo,
+                                            @PathParam("cedulaVendedor") String cedulaVendedor,
+                                            @PathParam("fecha") String fechaStr) {
 
         LocalDate fecha = LocalDate.parse(fechaStr);
 
@@ -74,5 +72,18 @@ public class ReservaVehiculoResource {
     public List<ReservaVehiculo> buscarTodos(){
         return this.rs.buscarTodos();
     }
+
+    @GET
+    @Path("/vehiculo/{placa}")
+    public List<ReservaVehiculo> buscarPorPlaca(@PathParam("placa") String placa) {
+        return this.rs.buscarPorPlaca(placa);
+    }
+
+    @GET
+    @Path("/vendedor-cedula/{cedula}")
+    public List<ReservaVehiculo> buscarPorCedulaVendedor(@PathParam("cedula") String cedula) {
+        return this.rs.buscarPorCedulaVendedor(cedula);
+    }
+    
 
 }
