@@ -17,11 +17,11 @@ public class ReservaVehiculoRepositoryImpl implements PanacheRepositoryBase<Rese
 
     public ReservaVehiculo buscarPorFecha(LocalDate fecha) {
 
-        TypedQuery<ReservaVehiculo> miQuery = this.em.createQuery("SELECT r FROM Reserva r WHERE r.fecha = :fecha",
+        TypedQuery<ReservaVehiculo> miQuery = this.em.createQuery("SELECT r FROM ReservaVehiculo r WHERE r.fecha = :fecha",
                 ReservaVehiculo.class);
         miQuery.setParameter("fecha", fecha);
 
-        return miQuery.getSingleResult();
+        return miQuery.getResultStream().findFirst().orElse(null);
 
     }
 

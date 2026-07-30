@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import uce.edu.grupal.domain.model.Pago;
 import uce.edu.grupal.infrastructure.repository.PagoRepositoryImpl;
+import uce.edu.grupal.infrastructure.repository.ReservaVehiculoRepositoryImpl;
 
 @ApplicationScoped
 @Transactional
@@ -14,6 +15,9 @@ public class PagoService {
 
     @Inject
     private PagoRepositoryImpl pri;
+
+    @Inject
+    private ReservaVehiculoRepositoryImpl rri;
 
     public void guardar(Pago c) {
         this.pri.persist(c);
@@ -42,9 +46,18 @@ public class PagoService {
     }
 
     public void eliminar(Integer id) {
-
-        this.pri.deleteById(id);
-
+        if (id == null) {
+            throw new IllegalArgumentException("El id no puede ser nulo");
+        }
+        Pago pago = this.pri.findById(id);
+        if (pago == null) {
+            throw new IllegalArgumentException("Pago con id " + id + " no encontrado");
+        }
+        long reservas = this.rri.count("pago.id", id);
+        if (reservas > 0) {
+            throw new IllegalArgumentException("No se puede eliminar: el pago tiene " + reservas + " reserva(s) asociada(s)");
+        }
+        this.pri.delete(pago);
     }
 
 }

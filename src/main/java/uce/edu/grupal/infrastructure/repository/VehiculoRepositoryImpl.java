@@ -18,7 +18,7 @@ public class VehiculoRepositoryImpl implements PanacheRepositoryBase<Vehiculo, I
         TypedQuery<Vehiculo> miQuery = this.em.createQuery("SELECT v FROM Vehiculo v WHERE v.placa = :placa", Vehiculo.class);
         miQuery.setParameter("placa", placa);
 
-        return miQuery.getSingleResult();
+        return miQuery.getResultStream().findFirst().orElse(null);
 
     }
     

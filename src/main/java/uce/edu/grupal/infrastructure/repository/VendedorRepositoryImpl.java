@@ -17,7 +17,7 @@ public class VendedorRepositoryImpl implements PanacheRepositoryBase<Vendedor, I
 
         TypedQuery<Vendedor> miQuery = this.em.createQuery("SELECT v FROM Vendedor v WHERE v.cedula = :cedula", Vendedor.class);
         miQuery.setParameter("cedula", cedula);
-        return miQuery.getSingleResult();
+        return miQuery.getResultStream().findFirst().orElse(null);
 
     }
 

@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import uce.edu.grupal.domain.model.Vendedor;
+import uce.edu.grupal.infrastructure.repository.ReservaVehiculoRepositoryImpl;
 import uce.edu.grupal.infrastructure.repository.VendedorRepositoryImpl;
 
 @ApplicationScoped
@@ -14,6 +15,9 @@ public class VendedorService {
 
     @Inject
     private VendedorRepositoryImpl er;
+
+    @Inject
+    private ReservaVehiculoRepositoryImpl rri;
 
     public void guardar(Vendedor empleado) {
         this.er.persist(empleado);
@@ -28,12 +32,32 @@ public class VendedorService {
     }
 
     public void eliminarPorCedula(String cedula) {
+        if (cedula == null || cedula.isBlank()) {
+            throw new IllegalArgumentException("La cedula no puede ser nula o vacia");
+        }
         Vendedor e = this.er.buscarPorCedula(cedula);
+        if (e == null) {
+            throw new IllegalArgumentException("Vendedor con cedula " + cedula + " no encontrado");
+        }
+        long reservas = this.rri.count("vendedor.id", e.getId());
+        if (reservas > 0) {
+            throw new IllegalArgumentException("No se puede eliminar: el vendedor tiene " + reservas + " reserva(s) asociada(s)");
+        }
         this.er.delete(e);
     }
 
     public void eliminar(Integer id) {
-        Vendedor vendedor = this.buscarPorId(id);
+        if (id == null) {
+            throw new IllegalArgumentException("El id no puede ser nulo");
+        }
+        Vendedor vendedor = this.er.findById(id);
+        if (vendedor == null) {
+            throw new IllegalArgumentException("Vendedor con id " + id + " no encontrado");
+        }
+        long reservas = this.rri.count("vendedor.id", id);
+        if (reservas > 0) {
+            throw new IllegalArgumentException("No se puede eliminar: el vendedor tiene " + reservas + " reserva(s) asociada(s)");
+        }
         this.er.delete(vendedor);
     }
 

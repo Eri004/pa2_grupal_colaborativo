@@ -139,7 +139,14 @@ public class ReservaVehiculoService {
     }
 
     public void eliminar(Integer id) {
-        this.rri.deleteById(id);
+        if (id == null) {
+            throw new IllegalArgumentException("El id no puede ser nulo");
+        }
+        ReservaVehiculo r = this.rri.findById(id);
+        if (r == null) {
+            throw new IllegalArgumentException("Reserva con id " + id + " no encontrada");
+        }
+        this.rri.delete(r);
     }
 
     public List<ReservaVehiculo> buscarPorPlaca(String placaVehiculo) {

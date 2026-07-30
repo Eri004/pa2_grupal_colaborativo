@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import uce.edu.grupal.domain.model.Vehiculo;
+import uce.edu.grupal.infrastructure.repository.ReservaVehiculoRepositoryImpl;
 import uce.edu.grupal.infrastructure.repository.VehiculoRepositoryImpl;
 
 @ApplicationScoped
@@ -14,6 +15,9 @@ public class VehiculoService {
 
     @Inject
     private VehiculoRepositoryImpl vr;
+
+    @Inject
+    private ReservaVehiculoRepositoryImpl rri;
 
     public void guardar(Vehiculo vehiculo) {
         this.vr.persist(vehiculo);
@@ -67,13 +71,33 @@ public class VehiculoService {
         
     }
 
-    public void eliminar(Integer id){
-        Vehiculo vehiculo = this.buscarPorId(id);
+    public void eliminar(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El id no puede ser nulo");
+        }
+        Vehiculo vehiculo = this.vr.findById(id);
+        if (vehiculo == null) {
+            throw new IllegalArgumentException("Vehiculo con id " + id + " no encontrado");
+        }
+        long reservas = this.rri.count("vehiculo.id", id);
+        if (reservas > 0) {
+            throw new IllegalArgumentException("No se puede eliminar: el vehiculo tiene " + reservas + " reserva(s) asociada(s)");
+        }
         this.vr.delete(vehiculo);
     }
-    
+
     public void eliminarPorPlaca(String placa) {
+        if (placa == null || placa.isBlank()) {
+            throw new IllegalArgumentException("La placa no puede ser nula o vacia");
+        }
         Vehiculo v = this.vr.buscarPorPlaca(placa);
+        if (v == null) {
+            throw new IllegalArgumentException("Vehiculo con placa " + placa + " no encontrado");
+        }
+        long reservas = this.rri.count("vehiculo.id", v.getId());
+        if (reservas > 0) {
+            throw new IllegalArgumentException("No se puede eliminar: el vehiculo tiene " + reservas + " reserva(s) asociada(s)");
+        }
         this.vr.delete(v);
     }
 

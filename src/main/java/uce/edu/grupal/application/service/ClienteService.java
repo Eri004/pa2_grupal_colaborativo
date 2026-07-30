@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import uce.edu.grupal.domain.model.Cliente;
 import uce.edu.grupal.infrastructure.repository.ClienteRepositoryImpl;
+import uce.edu.grupal.infrastructure.repository.ReservaVehiculoRepositoryImpl;
 
 @ApplicationScoped
 @Transactional
@@ -14,6 +15,9 @@ public class ClienteService {
 
     @Inject
     private ClienteRepositoryImpl cr;
+
+    @Inject
+    private ReservaVehiculoRepositoryImpl rri;
 
     public void guardar(Cliente cliente) {
         this.cr.persist(cliente);
@@ -55,13 +59,33 @@ public class ClienteService {
         return this.cr.buscarPorCedula(cedula);
     }
 
-    public void eliminar(Integer id){
-        Cliente cli = this.buscarPorId(id);
+    public void eliminar(Integer id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El id no puede ser nulo");
+        }
+        Cliente cli = this.cr.findById(id);
+        if (cli == null) {
+            throw new IllegalArgumentException("Cliente con id " + id + " no encontrado");
+        }
+        long reservas = this.rri.count("cliente.id", id);
+        if (reservas > 0) {
+            throw new IllegalArgumentException("No se puede eliminar: el cliente tiene " + reservas + " reserva(s) asociada(s)");
+        }
         this.cr.delete(cli);
     }
 
     public void eliminarPorCedula(String cedula) {
+        if (cedula == null || cedula.isBlank()) {
+            throw new IllegalArgumentException("La cedula no puede ser nula o vacia");
+        }
         Cliente c = this.cr.buscarPorCedula(cedula);
+        if (c == null) {
+            throw new IllegalArgumentException("Cliente con cedula " + cedula + " no encontrado");
+        }
+        long reservas = this.rri.count("cliente.id", c.getId());
+        if (reservas > 0) {
+            throw new IllegalArgumentException("No se puede eliminar: el cliente tiene " + reservas + " reserva(s) asociada(s)");
+        }
         this.cr.delete(c);
     }
 
