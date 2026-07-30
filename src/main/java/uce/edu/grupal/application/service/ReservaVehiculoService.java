@@ -9,7 +9,10 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import uce.edu.grupal.application.interceptor.Auditoria;
 import uce.edu.grupal.domain.model.Cliente;
+import uce.edu.grupal.domain.model.Pago;
 import uce.edu.grupal.domain.model.ReservaVehiculo;
+import uce.edu.grupal.domain.model.Vehiculo;
+import uce.edu.grupal.domain.model.Vendedor;
 import uce.edu.grupal.infrastructure.repository.ReservaVehiculoRepositoryImpl;
 
 @ApplicationScoped
@@ -75,16 +78,58 @@ public class ReservaVehiculoService {
     }
 
     public void actualizar(Integer id, ReservaVehiculo r) {
-        ReservaVehiculo nuevo = this.rri.findById(id);
-
-        nuevo.setFecha(r.getFecha());
-        nuevo.setEstado(r.getEstado());
-        nuevo.setCliente(this.cs.actualizar(r.getCliente().getId(), r.getCliente()));
-        nuevo.setPago(this.ps.buscarPorId(r.getPago().getId()));
-        nuevo.setVehiculo(this.vs.buscarPorId(r.getVehiculo().getId()));
-        nuevo.setVendedor(this.vends.buscarPorId(r.getVendedor().getId()));
-
+    if (r == null) {
+        throw new IllegalArgumentException("La reserva no puede ser nula");
     }
+    ReservaVehiculo nuevo = this.rri.findById(id);
+    if (nuevo == null) {
+        throw new IllegalArgumentException("Reserva con id " + id + " no encontrada");
+    }
+    if (r.getFecha() != null)  nuevo.setFecha(r.getFecha());
+    if (r.getEstado() != null) nuevo.setEstado(r.getEstado());
+    if (r.getCliente() != null) {
+        if (r.getCliente().getId() == null) {
+            throw new IllegalArgumentException("El cliente debe tener un id para actualizar la reserva");
+        }
+        Cliente cli = this.cs.buscarPorId(r.getCliente().getId());
+        if (cli == null) {
+            throw new IllegalArgumentException("Cliente con id " + r.getCliente().getId() + " no encontrado");
+        }
+        nuevo.setCliente(cli);
+    }
+    if (r.getVehiculo() != null) {
+        if (r.getVehiculo().getId() == null) {
+            throw new IllegalArgumentException("El vehiculo debe tener un id para actualizar la reserva");
+        }
+        Vehiculo veh = this.vs.buscarPorId(r.getVehiculo().getId());
+        if (veh == null) {
+            throw new IllegalArgumentException("Vehiculo con id " + r.getVehiculo().getId() + " no encontrado");
+        }
+        nuevo.setVehiculo(veh);
+    }
+    if (r.getVendedor() != null) {
+        if (r.getVendedor().getId() == null) {
+            throw new IllegalArgumentException("El vendedor debe tener un id para actualizar la reserva");
+        }
+        Vendedor vend = this.vends.buscarPorId(r.getVendedor().getId());
+        if (vend == null) {
+            throw new IllegalArgumentException("Vendedor con id " + r.getVendedor().getId() + " no encontrado");
+        }
+        nuevo.setVendedor(vend);
+    }
+    if (r.getPago() != null) {
+        if (r.getPago().getId() == null) {
+            throw new IllegalArgumentException("El pago debe tener un id para actualizar la reserva");
+        }
+        Pago pago = this.ps.buscarPorId(r.getPago().getId());
+        if (pago == null) {
+            throw new IllegalArgumentException("Pago con id " + r.getPago().getId() + " no encontrado");
+        }
+        nuevo.setPago(pago);
+    }
+    this.rri.getEntityManager().merge(nuevo);
+}
+
 
     public ReservaVehiculo buscarPorId(Integer id) {
         return this.rri.findById(id);

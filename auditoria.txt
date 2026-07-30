@@ -1,0 +1,8 @@
+=================================================
+Fecha Auditoría: 2026-07-30T11:56:14.664365800
+Método invocado: nuevaReserva
+Datos de la reserva:
+Estado: PENDIENTE, Fecha: 2026-08-15
+uce.edu.grupal.domain.model.ReservaVehiculo@1ae00ade
+=================================================
+
