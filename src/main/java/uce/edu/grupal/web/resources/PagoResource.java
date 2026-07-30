@@ -10,7 +10,6 @@ import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import uce.edu.grupal.application.service.PagoService;
-import uce.edu.grupal.domain.model.Cliente;
 import uce.edu.grupal.domain.model.Pago;
 
 @Path("/pago")

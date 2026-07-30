@@ -34,6 +34,10 @@ public class ClienteService {
         return this.cr.findById(id);
     }
 
+    public Cliente buscarPorCedula(String cedula) {
+        return this.cr.buscarPorCedula(cedula);
+    }
+
     public void eliminar(Integer id){
         Cliente cli = this.buscarPorId(id);
         this.cr.delete(cli);
@@ -48,8 +52,5 @@ public class ClienteService {
         return this.cr.listAll();
     }
 
-    public Cliente buscarPorCedula(String cedula) {
-        return this.cr.buscarPorCedula(cedula);
-    }
 
 }

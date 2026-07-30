@@ -62,7 +62,8 @@ public class VendedorService {
         nuevo.setCedula(c.getCedula());
         nuevo.setNombres(c.getNombres());
         nuevo.setApellidos(c.getApellidos());
-        nuevo.setCargo(c.getCargo());
+        
+
         // Actualizar el objeto Vendedor en la base de datos
         this.er.getEntityManager().merge(nuevo);
     }

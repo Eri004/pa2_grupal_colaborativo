@@ -1,7 +1,6 @@
 package uce.edu.grupal.infrastructure.repository;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,13 +15,28 @@ public class ReservaVehiculoRepositoryImpl implements PanacheRepositoryBase<Rese
     @Inject
     private EntityManager em;
 
-    public ReservaVehiculo buscarPorFecha(LocalDate fecha){
+    public ReservaVehiculo buscarPorFecha(LocalDate fecha) {
 
-        TypedQuery<ReservaVehiculo> miQuery = this.em.createQuery("SELECT r FROM Reserva r WHERE r.fecha = :fecha", ReservaVehiculo.class);
+        TypedQuery<ReservaVehiculo> miQuery = this.em.createQuery("SELECT r FROM Reserva r WHERE r.fecha = :fecha",
+                ReservaVehiculo.class);
         miQuery.setParameter("fecha", fecha);
 
         return miQuery.getSingleResult();
 
+    }
+
+    public ReservaVehiculo buscarPorPlacaCedulaFecha(String placaVehiculo, String cedulaVendedor, LocalDate fecha) {
+        String queryS = "SELECT r FROM ReservaVehiculo r " +
+                "WHERE r.vehiculo.placa = :placa " +
+                "AND r.vendedor.cedula = :cedula " +
+                "AND r.fecha = :fecha";
+
+        TypedQuery<ReservaVehiculo> query = em.createQuery(queryS, ReservaVehiculo.class);
+        query.setParameter("placa", placaVehiculo);
+        query.setParameter("cedula", cedulaVendedor);
+        query.setParameter("fecha", fecha);
+
+        return query.getResultStream().findFirst().orElse(null);
     }
 
 }
